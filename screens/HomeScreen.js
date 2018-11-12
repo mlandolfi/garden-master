@@ -9,14 +9,34 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
+  FlatList,
 } from 'react-native';
 import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
 export default class HomeScreen extends React.Component {
+
   static navigationOptions = {
     header: null,
+  };
+
+  constructor(props) {
+    super(props);
+    this.gridSize = 56;
+    this.boxSize = Math.trunc(Dimensions.get('window').width / 8)
+    this.state = {
+      selected: new Array(this.gridSize).fill(0),
+    };
+  }
+
+  _handleGridSelect = (index) => {
+    newSelected = this.state.selected;
+    newSelected[index] = newSelected[index] == 0 ? 1 : 0;
+    this.setState({
+      ...this.state,
+      selected: newSelected,
+    });
   };
 
   render() {
@@ -38,20 +58,46 @@ export default class HomeScreen extends React.Component {
         >
           <ScrollView
           minimumZoomScale={1}
-          maximumZoomScale={3}
+          maximumZoomScale={4}
         >
-        <View>
-          <Text>Here is my text</Text>
+        <View
+          style={{
+            width:  Dimensions.get('window').width,
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            borderColor: 'black',
+            borderWidth: Math.floor((Dimensions.get('window').width - (8*this.boxSize))/2),
+          }}
+        >
+          {Array.from(Array(this.gridSize).keys()).map((index) => {
+            return (
+              <TouchableOpacity
+                onPress={() => this._handleGridSelect(index)}
+                key={'touch'+index.toString()}
+              >
+                <View
+                  key={'block'+index.toString()}
+                  style={{
+                    width: this.boxSize,
+                    height: this.boxSize,
+                    backgroundColor: this.state.selected[index] == 1 ? 'grey' : 'pink',
+                    borderColor: 'black',
+                    borderWidth: '0.5',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                />
+              </TouchableOpacity>
+              );
+          })}
         </View>
         </ScrollView>
         </View>
       </View>
     );
   }
-
-  
-
-  
 
   _maybeRenderDevelopmentModeWarning() {
     if (__DEV__) {
