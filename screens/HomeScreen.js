@@ -23,16 +23,24 @@ export default class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.gridSize = 560;
     this.boxSize = Math.trunc(Dimensions.get('window').width / 20)
+    var numRows = 20;
+    var numColumns = 10;
+    selected = new Array(numRows);
+    for (i=0; i<numRows; i++)
+      selected[i] = new Array(numColumns).fill(0);
     this.state = {
-      selected: new Array(this.gridSize).fill(0),
+      selected,
+      numColumns,
+      numRows, 
     };
   }
 
   _handleGridSelect = (index) => {
+    return
     newSelected = this.state.selected;
-    newSelected[index] = newSelected[index] == 0 ? 1 : 0;
+    var { numRows, numColumns } = this.state;
+    newSelected[Math.trunc(index/numColumns)][index%numColumns] = (newSelected[Math.trunc(index/numColumns)][index%numColumns] == 0) ? 1 : 0;
     this.setState({
       ...this.state,
       selected: newSelected,
@@ -53,7 +61,7 @@ export default class HomeScreen extends React.Component {
         <View
         style={{
           height: Dimensions.get('window').height,
-          backgroundColor: 'skyblue',
+          backgroundColor: 'darkgreen',
         }}
         >
           <ScrollView
@@ -68,13 +76,14 @@ export default class HomeScreen extends React.Component {
                 flexWrap: 'wrap',
                 justifyContent: 'center',
                 borderColor: 'black',
-                borderWidth: Math.floor((Dimensions.get('window').width - (8*this.boxSize))/2),
+                borderWidth: Math.floor((Dimensions.get('window').width - (this.state.numColumns*this.boxSize))/2),
               }}
             >
-              {Array.from(Array(this.gridSize).keys()).map((index) => {
+              {Array.from(Array(this.state.numColumns*this.state.numRows).keys()).map((index) => {
                 return (
                   <GridBox
                     selectable
+                    onSelect={this._handleGridSelect}
                     key={index.toString()}
                     keyName={index.toString()}
                     edgeLength={this.boxSize}

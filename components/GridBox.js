@@ -13,27 +13,17 @@ export default class GridBox extends React.Component {
 		this.state = { selected: false };
 	}
 
-	_handleGridSelect = () => {
+	_handleSelect = () => {
 		var selected  = !this.state.selected;
 		this.setState({ selected })
 		if (this.props.onSelect) {
 			this.props.onSelect(this.props.keyName);	// callback to parent component
 		}
 	}
-
-	getBorderProps = (borders) => {
-		if (borders.length < 4)	return { borderWidth: 0.5 };
-		return {
-		    borderTopWidth: borders[0] ? 0.5 : 0,
-            borderRightWidth: borders[1] ? 0.5 : 0,
-            borderBottomWidth: borders[2] ? 0.5 : 0,
-            borderLeftWidth: borders[3] ? 0.5 : 0,
-		};
-	}
-
+	
 	renderInnerBox = () => {
 		var { edgeLength, keyName, children } = this.props;	// pulling edgeLength, keyName, and children out of the props
-		var borders = this.props.borders ? this.props.borders : [];
+		var { selected } = this.state;
 		return (
 			<View
               key={'block'+keyName}
@@ -42,7 +32,7 @@ export default class GridBox extends React.Component {
                 height: edgeLength,
                 backgroundColor: this.state.selected ? this.selectedColor : this.color,
                 borderColor: this.borderColor,
-                ...this.getBorderProps(borders),	// destructure the borderProps
+                borderWidth: selected ? 0 : 0.5,
               }}
 	        >
 	        { children }
@@ -55,7 +45,7 @@ export default class GridBox extends React.Component {
 		if (selectable) {
 			return (
 				<TouchableOpacity
-	                onPress={this._handleGridSelect}
+	                onPress={this._handleSelect}
 	                key={'touch'+keyName}
 	            >
 		            {this.renderInnerBox()}
@@ -71,7 +61,6 @@ GridBox.propTypes = {
 	keyName: PropTypes.string.isRequired,
 	edgeLength: PropTypes.number.isRequired,
 	selectable: PropTypes.bool,
-	borders: PropTypes.array,	// borders = [top, right, bottom, left]; 1 for yes 0 for no
 	selectedColor: PropTypes.string,
 	color: PropTypes.string,
 	borderColor: PropTypes.string,
