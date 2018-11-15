@@ -8,6 +8,7 @@ import {
   Text,
   View,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import { WebBrowser } from 'expo';
 
@@ -23,13 +24,15 @@ export default class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.boxSize = Math.trunc(Dimensions.get('window').width / 20)
-    var numRows = 20;
     var numColumns = 10;
+    var screenRatio = Dimensions.get('window').height / Dimensions.get('window').width ;  // height / width
+    var numRows = Math.trunc(screenRatio * numColumns);
+    this.boxSize = Math.trunc(Dimensions.get('window').width / numColumns);
     selected = new Array(numRows);
     for (i=0; i<numRows; i++)
       selected[i] = new Array(numColumns).fill(0);
     this.state = {
+      edit: false,
       selected,
       numColumns,
       numRows, 
@@ -47,6 +50,10 @@ export default class HomeScreen extends React.Component {
     });
   };
 
+  _toggleEditMode = () => {
+    this.setState({ ...this.state, edit: !this.state.edit });
+  };
+
   render() {
     return (
       <View name='fullContainer'>
@@ -55,14 +62,12 @@ export default class HomeScreen extends React.Component {
           style={{
             display: 'block',
             height: 20,
-            backgroundColor: 'grey',
           }}
         />
         <View
-        style={{
-          height: Dimensions.get('window').height,
-          backgroundColor: 'darkgreen',
-        }}
+          style={{
+            backgroundColor: 'transparent',
+          }}
         >
           <ScrollView
           minimumZoomScale={1}
@@ -82,7 +87,7 @@ export default class HomeScreen extends React.Component {
               {Array.from(Array(this.state.numColumns*this.state.numRows).keys()).map((index) => {
                 return (
                   <GridBox
-                    selectable
+                    selectable={this.state.edit}
                     onSelect={this._handleGridSelect}
                     key={index.toString()}
                     keyName={index.toString()}
@@ -92,6 +97,18 @@ export default class HomeScreen extends React.Component {
               })}
             </View>
           </ScrollView>
+          <TouchableOpacity
+            onPress={this._toggleEditMode}
+            style={styles.editModeButtonContainer}
+          >
+            <View
+            name='editModeButton'
+            style={{
+              ...styles.editModeButton,
+              backgroundColor: this.state.edit ? 'grey' : 'white',
+            }}
+            />
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -120,21 +137,21 @@ export default class HomeScreen extends React.Component {
     }
   }
 
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  };
-
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
-    );
-  };
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
+  editModeButtonContainer: {
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    right: 10,
+    bottom: 40,
+  },
+  editModeButton: {
+    height: 50,
+    borderRadius: 30,
+    borderWidth: 5,
+    borderColor: 'black',
   },
   developmentModeText: {
     marginBottom: 20,
@@ -142,77 +159,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 19,
     textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
   },
   helpLinkText: {
     fontSize: 14,
