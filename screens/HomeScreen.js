@@ -26,7 +26,7 @@ export default class HomeScreen extends React.Component {
     super(props);
     var numColumns = 10;
     var screenRatio = Dimensions.get('window').height / Dimensions.get('window').width ;  // height / width
-    var numRows = Math.trunc(screenRatio * numColumns);
+    var numRows = Math.trunc(screenRatio * numColumns)-2;
     this.boxSize = Math.trunc(Dimensions.get('window').width / numColumns);
     selected = new Array(numRows);
     for (i=0; i<numRows; i++)
@@ -53,7 +53,7 @@ export default class HomeScreen extends React.Component {
   _toggleEditMode = () => {
     this.setState({ ...this.state, edit: !this.state.edit });
   };
-
+  
   render() {
     return (
       <View name='fullContainer'>
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   editModeButton: {
     height: 50,
     borderRadius: 30,
-    borderWidth: 5,
+    borderWidth: 2,
     borderColor: 'black',
   },
   developmentModeText: {

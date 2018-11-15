@@ -1,8 +1,8 @@
-import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
-import PropTypes from 'prop-types'
+import React from 'react';	// always import react!!
+import { TouchableOpacity, View } from 'react-native';	// importing components to use
+import PropTypes from 'prop-types';	
 
-export default class GridBox extends React.Component {
+export default class GridBox extends React.Component {	// class always looks like this
 
 	constructor(props) {
 		super(props);
@@ -10,55 +10,55 @@ export default class GridBox extends React.Component {
 		this.color = props.color ? props.color : 'white';
 		this.selectedColor = props.selectedColor ? props.selectedColor : 'grey';
 		this.borderColor = props.borderColor ? props.borderColor : 'black';
-		this.state = { selected: false };
+		this.state = { selected: false };	// sets the initial state with selected == false
 	}
 
 	_handleSelect = () => {
-		var selected  = !this.state.selected;
-		this.setState({ selected })
-		if (this.props.onSelect) {
+		var selected  = !this.state.selected;	// sets temporary variable to opposite of this.state.selected
+		this.setState({ selected })				// asychronously changing the state, will re-call render() when state is changed
+		if (this.props.onSelect) {						// sees if the onSelect property was passed down or not
 			this.props.onSelect(this.props.keyName);	// callback to parent component
 		}
 	}
 	
 	renderInnerBox = () => {
 		var { edgeLength, keyName, children } = this.props;	// pulling edgeLength, keyName, and children out of the props
-		var { selected } = this.state;
+		var { selected } = this.state;	// same as var selected = this.state.selected
 		return (
-			<View
-              key={'block'+keyName}
-              style={{
+			<View	// opening tag
+              key={'block'+keyName}		// the key prop is just an identifier
+              style={{	// inline styling 
               	width: edgeLength,
                 height: edgeLength,
                 backgroundColor: this.state.selected ? this.selectedColor : this.color,
                 borderColor: this.borderColor,
-                borderWidth: selected ? 0 : 0.5,
+                borderWidth: selected ? 0 : 0.5,	// ternary saying if selected == true then 0 otherwise 0.5
               }}
 	        >
 	        { children }
-	        </View>
+	        </View>	// closing tag
 		);
 	}
 
 	render() {
-		var { keyName, selectable } = this.props;
+		var { keyName, selectable } = this.props;	// same as var keyName = this.props.keyName; var selectable = this.props.selectable
 		if (selectable) {
-			return (
+			return (	// when component is more than one line use paranthesis ()
 				<TouchableOpacity
-	                onPress={this._handleSelect}
+	                onPress={this._handleSelect}	// setting the onPress to call the _handleSelect function
 	                key={'touch'+keyName}
 	            >
 		            {this.renderInnerBox()}
 	            </TouchableOpacity>
 			);
 		} else {
-			return this.renderInnerBox();
+			return this.renderInnerBox();	// if it's not selectable thenno need for the TouchableOpacity
 		}
 		
 	}
 }
-GridBox.propTypes = {
-	keyName: PropTypes.string.isRequired,
+GridBox.propTypes = {	// setting the propTypes so if they're violated we throw errors
+	keyName: PropTypes.string.isRequired,	// isRequired is what you think
 	edgeLength: PropTypes.number.isRequired,
 	selectable: PropTypes.bool,
 	selectedColor: PropTypes.string,
