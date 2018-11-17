@@ -26,33 +26,22 @@ export default class HomeScreen extends React.Component {
     super(props);
     var numColumns = 10;
     var screenRatio = Dimensions.get('window').height / Dimensions.get('window').width ;  // height / width
-    var numRows = Math.trunc(screenRatio * numColumns)-2;
+    var numRows = Math.ceil(screenRatio * numColumns);
     this.boxSize = Math.trunc(Dimensions.get('window').width / numColumns);
-    selected = new Array(numRows);
-    for (i=0; i<numRows; i++)
-      selected[i] = new Array(numColumns).fill(0);
     this.state = {
       edit: false,
-      selected,
       numColumns,
       numRows, 
     };
   }
 
-  _handleGridSelect = (index) => {
-    return
-    newSelected = this.state.selected;
-    var { numRows, numColumns } = this.state;
-    newSelected[Math.trunc(index/numColumns)][index%numColumns] = (newSelected[Math.trunc(index/numColumns)][index%numColumns] == 0) ? 1 : 0;
-    this.setState({
-      ...this.state,
-      selected: newSelected,
-    });
-  };
-
   _toggleEditMode = () => {
     this.setState({ ...this.state, edit: !this.state.edit });
   };
+
+  _addRow = () => {
+    this.setState({ ...this.state, numRows: this.state.numRows+1 })
+  }
   
   render() {
     return (
@@ -66,29 +55,32 @@ export default class HomeScreen extends React.Component {
         />
         <View
           style={{
-            backgroundColor: 'transparent',
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height,
+            borderWidth: 5,
           }}
         >
           <ScrollView
-          minimumZoomScale={1}
-          maximumZoomScale={4}
+          minimumZoomScale={0.75}  // zooming out
+          maximumZoomScale={4}  // zooming in
+          style={{ backgroundColor: 'skyblue' }}
+          centerContent
           >
             <View
               style={{
-                width:  Dimensions.get('window').width,
+                width:  this.state.numColumns*this.boxSize,
+                margin: 'auto',
                 display: 'flex',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
                 justifyContent: 'center',
                 borderColor: 'black',
-                borderWidth: Math.floor((Dimensions.get('window').width - (this.state.numColumns*this.boxSize))/2),
               }}
             >
               {Array.from(Array(this.state.numColumns*this.state.numRows).keys()).map((index) => {
                 return (
                   <GridBox
                     selectable={this.state.edit}
-                    onSelect={this._handleGridSelect}
                     key={index.toString()}
                     keyName={index.toString()}
                     edgeLength={this.boxSize}
@@ -109,6 +101,17 @@ export default class HomeScreen extends React.Component {
             }}
             />
           </TouchableOpacity>
+          {this.state.edit &&
+            <TouchableOpacity
+              style={styles.addRowContainer}
+              onPress={this._addRow}
+            >
+              <View
+                name='addRowButton'
+                style={styles.addRowButton}
+              />
+            </TouchableOpacity>
+          }
         </View>
       </View>
     );
@@ -152,6 +155,19 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth: 2,
     borderColor: 'black',
+  },
+  addRowContainer: {
+    position: 'absolute',
+    width: 150,
+    height: 50,
+    right: 80,
+    bottom: 40,
+  },
+  addRowButton: {
+    height: 50,
+    borderWidth: 2,
+    borderColor: 'black',
+    backgroundColor: 'grey',
   },
   developmentModeText: {
     marginBottom: 20,
