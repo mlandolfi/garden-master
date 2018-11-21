@@ -14,7 +14,7 @@ import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
-import GridBox from '../components/GridBox';
+import TouchGrid from '../components/TouchGrid';
 
 export default class HomeScreen extends React.Component {
 
@@ -25,15 +25,16 @@ export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     var numColumns = 10;
-    var screenRatio = Dimensions.get('window').height / Dimensions.get('window').width ;  // height / width
-    var numRows = Math.ceil(screenRatio * numColumns);
-    this.boxSize = Math.trunc(Dimensions.get('window').width / numColumns);
+    var numRows = 10;
+    this.boxSize = Math.trunc((Dimensions.get('window').width-10) / numColumns);  // rn the 10 is for borders
     this.state = {
       edit: false,
       numColumns,
       numRows, 
     };
   }
+
+  getBoxWidth 
 
   _toggleEditMode = () => {
     this.setState({ ...this.state, edit: !this.state.edit });
@@ -66,28 +67,12 @@ export default class HomeScreen extends React.Component {
           style={{ backgroundColor: 'skyblue' }}
           centerContent
           >
-            <View
-              style={{
-                width:  this.state.numColumns*this.boxSize,
-                margin: 'auto',
-                display: 'flex',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                borderColor: 'black',
-              }}
-            >
-              {Array.from(Array(this.state.numColumns*this.state.numRows).keys()).map((index) => {
-                return (
-                  <GridBox
-                    selectable={this.state.edit}
-                    key={index.toString()}
-                    keyName={index.toString()}
-                    edgeLength={this.boxSize}
-                  />
-                );
-              })}
-            </View>
+            <TouchGrid
+              numRows={this.state.numRows}
+              numColumns={this.state.numColumns}
+              boxEdgeLength={this.boxSize}
+              edit={this.state.edit}
+            />
           </ScrollView>
           <TouchableOpacity
             onPress={this._toggleEditMode}
