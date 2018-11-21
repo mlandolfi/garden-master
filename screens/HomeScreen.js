@@ -37,13 +37,13 @@ export default class HomeScreen extends React.Component {
   getBoxWidth 
 
   _toggleEditMode = () => {
-    this.setState({ ...this.state, edit: !this.state.edit });
+    this.setState({ edit: !this.state.edit });
   };
 
   _addRow = () => {
-    this.setState({ ...this.state, numRows: this.state.numRows+1 })
+    this.setState({ numRows: this.state.numRows+1 });
   }
-  
+
   render() {
     return (
       <View name='fullContainer'>
@@ -54,17 +54,14 @@ export default class HomeScreen extends React.Component {
             height: 20,
           }}
         />
-        <View
-          style={{
-            width: Dimensions.get('window').width,
-            height: Dimensions.get('window').height,
-            borderWidth: 5,
-          }}
-        >
+        <View style={styles.activeContainer} >
           <ScrollView
           minimumZoomScale={0.75}  // zooming out
           maximumZoomScale={4}  // zooming in
-          style={{ backgroundColor: 'skyblue' }}
+          contentContainerStyle={{
+            flexGrow : 1,
+            justifyContent : 'center'
+          }}
           centerContent
           >
             <TouchGrid
@@ -128,6 +125,11 @@ export default class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  activeContainer: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+    borderWidth: 5,
+  },
   editModeButtonContainer: {
     position: 'absolute',
     width: 50,
