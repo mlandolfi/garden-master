@@ -1,6 +1,8 @@
 import React from 'react';	// always import react!!
 import { TouchableOpacity, View } from 'react-native';	// importing components to use
-import PropTypes from 'prop-types';	
+import PropTypes from 'prop-types';
+
+import { palette } from '../palette';
 
 export default class GridBox extends React.Component {	// class always looks like this
 
@@ -8,7 +10,7 @@ export default class GridBox extends React.Component {	// class always looks lik
 		super(props);
 		// sets preferences for colors if they are given otherwise it sets defaults
 		this.color = props.color ? props.color : 'white';
-		this.selectedColor = props.selectedColor ? props.selectedColor : 'grey';
+		this.selectedColor = props.selectedColor ? props.selectedColor : palette.secondary.main;
 		this.borderColor = props.borderColor ? props.borderColor : 'black';
 		this.state = { selected: false };	// sets the initial state with selected == false
 	}

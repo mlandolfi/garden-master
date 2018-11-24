@@ -1,8 +1,6 @@
 import React from 'react';
 import { Button } from 'react-native';
 import {
-  Image,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,7 +8,6 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 

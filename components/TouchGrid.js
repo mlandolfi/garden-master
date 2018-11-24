@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 
 import GridBox from '../components/GridBox';
 
+import { palette } from '../palette';
+
 export default class TouchGrid extends React.PureComponent {
 
 	buildKeysArray = (numRows, numColumns) => {
