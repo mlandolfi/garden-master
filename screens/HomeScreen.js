@@ -29,12 +29,11 @@ export default class HomeScreen extends React.Component {
     this.boxSize = Math.trunc((Dimensions.get('window').width-10) / numColumns);  // rn the 10 is for borders
     this.state = {
       edit: false,
+      showGrid: true,
       numColumns,
       numRows, 
     };
   }
-
-  getBoxWidth 
 
   _toggleEditMode = () => {
     this.setState({ edit: !this.state.edit });
@@ -42,7 +41,11 @@ export default class HomeScreen extends React.Component {
 
   _addRow = () => {
     this.setState({ numRows: this.state.numRows+1 });
-  }
+  };
+
+  _addColumn = () => {
+    this.setState({ numColumns: this.state.numColumns+1 });
+  };
 
   render() {
     return (
@@ -54,23 +57,13 @@ export default class HomeScreen extends React.Component {
             height: 20,
           }}
         />
-        <View style={styles.activeContainer} >
-          <ScrollView
-          minimumZoomScale={0.75}  // zooming out
-          maximumZoomScale={4}  // zooming in
-          contentContainerStyle={{
-            flexGrow : 1,
-            justifyContent : 'center'
-          }}
-          centerContent
-          >
+        <View style={styles.activeContainer} > 
             <TouchGrid
               numRows={this.state.numRows}
               numColumns={this.state.numColumns}
               boxEdgeLength={this.boxSize}
               edit={this.state.edit}
             />
-          </ScrollView>
           <TouchableOpacity
             onPress={this._toggleEditMode}
             style={styles.editModeButtonContainer}
@@ -94,32 +87,20 @@ export default class HomeScreen extends React.Component {
               />
             </TouchableOpacity>
           }
+          {this.state.edit &&
+            <TouchableOpacity
+              style={styles.addColumnContainer}
+              onPress={this._addColumn}
+            >
+              <View
+                name='addColumnButton'
+                style={styles.addColumnButton}
+              />
+            </TouchableOpacity>
+          }
         </View>
       </View>
     );
-  }
-
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
   }
 
 }
@@ -127,7 +108,7 @@ export default class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
   activeContainer: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    height: Dimensions.get('window').height-20, // the 20 is weird shit Lando can explain
     borderWidth: 5,
   },
   editModeButtonContainer: {
@@ -135,7 +116,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     right: 10,
-    bottom: 40,
+    bottom: 10,
   },
   editModeButton: {
     height: 50,
@@ -147,8 +128,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 150,
     height: 50,
-    right: 80,
-    bottom: 40,
+    right: 70,
+    bottom: 10,
   },
   addRowButton: {
     height: 50,
@@ -156,15 +137,17 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     backgroundColor: 'grey',
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
+  addColumnContainer: {
+    position: 'absolute',
+    width: 50,
+    height: 150,
+    right: 10,
+    bottom: 70,
   },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
+  addColumnButton: {
+    height: 150,
+    borderWidth: 2,
+    borderColor: 'black',
+    backgroundColor: 'grey',
+  }
 });

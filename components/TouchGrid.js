@@ -1,35 +1,56 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import PropTypes from 'prop-types';
 
 import GridBox from '../components/GridBox';
 
 export default class TouchGrid extends React.PureComponent {
 
+	buildKeysArray = (numRows, numColumns) => {
+		var arrayToReturn = [];
+		for (let i=0; i<numRows; i++) {
+			arrayToReturn.push([])
+			for (let j=0; j<numColumns; j++)
+				arrayToReturn[i].push(i.toString() + j.toString());
+		}
+		return arrayToReturn;
+	}
+
 	render() {
-		var { numRows, numColumns, boxEdgeLength, edit } = this.props;
+		let { numRows, numColumns, boxEdgeLength, edit } = this.props;
+		let keysArray = this.buildKeysArray(numRows, numColumns);
 		return (
-			<View
-              style={{
-                margin: 'auto',
-                display: 'flex',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-              }}
-            >
-              {Array.from(Array(numColumns*numRows).keys()).map((index) => {
-              	var strIndex = index.toString();
-                return (
-                  <GridBox
-                    selectable={edit}
-                    key={strIndex}
-                    keyName={strIndex}
-                    edgeLength={boxEdgeLength}
-                  />
-                );
-              })}
-            </View>
+			<ScrollView
+	          maximumZoomScale={4}  // zooming in
+	          contentContainerStyle={{
+	          	flexGrow: 1,
+	            justifyContent : 'center',
+	            minWidth: numColumns * boxEdgeLength + 10,	// the 10 accounts for the border
+	          }}
+	          centerContent
+	        >		
+				<View
+	              style={{
+	                display: 'flex',
+	                flexDirection: 'row',
+	                flexWrap: 'wrap',
+	                justifyContent: 'center',
+	              }}
+	            >
+	            {keysArray.map((row) => {
+	            	return row.map((index) => {
+	            		return (
+	            			<GridBox
+	            				selectable={edit}
+	            				key={index}
+	            				keyName={index}
+	            				edgeLength={boxEdgeLength}
+	            			/>
+	            		);
+	            	})
+	            })}
+	            </View>
+            </ScrollView>
 		);
 	}
 }
