@@ -23,12 +23,12 @@ export default class HomeScreen extends React.Component {
     super(props);
     var numColumns = 10;
     var numRows = 10;
-    this.boxSize = Math.trunc((Dimensions.get('window').width-10) / numColumns);  // rn the 10 is for borders
     this.state = {
       edit: false,
       showGrid: true,
       numColumns,
       numRows, 
+      boxSize: Math.trunc((Dimensions.get('window').width-10) / numColumns),
     };
   }
 
@@ -41,7 +41,10 @@ export default class HomeScreen extends React.Component {
   };
 
   _addColumn = () => {
-    this.setState({ numColumns: this.state.numColumns+1 });
+    this.setState({
+      numColumns: this.state.numColumns+1,
+      boxSize: Math.trunc((Dimensions.get('window').width-10) / (this.state.numColumns+1)),
+    });
   };
 
   render() {
@@ -58,7 +61,7 @@ export default class HomeScreen extends React.Component {
             <TouchGrid
               numRows={this.state.numRows}
               numColumns={this.state.numColumns}
-              boxEdgeLength={this.boxSize}
+              boxEdgeLength={this.state.boxSize}
               edit={this.state.edit}
             />
           <TouchableOpacity
