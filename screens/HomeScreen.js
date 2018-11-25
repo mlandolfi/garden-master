@@ -5,11 +5,9 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions,
   TouchableOpacity,
 } from 'react-native';
-
-import { MonoText } from '../components/StyledText';
+import Layout from '../constants/Layout';
 
 import TouchGrid from '../components/TouchGrid';
 
@@ -28,7 +26,7 @@ export default class HomeScreen extends React.Component {
       showGrid: true,
       numColumns,
       numRows, 
-      boxSize: Math.trunc((Dimensions.get('window').width-10) / numColumns),
+      boxSize: Math.trunc((Layout.window.width-10) / numColumns),
     };
   }
 
@@ -43,7 +41,7 @@ export default class HomeScreen extends React.Component {
   _addColumn = () => {
     this.setState({
       numColumns: this.state.numColumns+1,
-      boxSize: Math.trunc((Dimensions.get('window').width-10) / (this.state.numColumns+1)),
+      boxSize: Math.trunc((Layout.window.width-10) / (this.state.numColumns+1)),
     });
   };
 
@@ -107,8 +105,8 @@ export default class HomeScreen extends React.Component {
 
 const styles = StyleSheet.create({
   activeContainer: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height-20, // the 20 is weird shit Lando can explain
+    width: Layout.window.width,
+    height: Layout.window.height-20, // the 20 is weird shit Lando can explain
     borderWidth: 5,
   },
   editModeButtonContainer: {
