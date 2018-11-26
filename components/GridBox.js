@@ -2,7 +2,7 @@ import React from 'react';	// always import react!!
 import { TouchableOpacity, View } from 'react-native';	// importing components to use
 import PropTypes from 'prop-types';
 
-import { palette } from '../palette';
+import { palette } from '../constants/palette';
 
 export default class GridBox extends React.Component {	// class always looks like this
 

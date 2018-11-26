@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import GridBox from '../components/GridBox';
 
-import { palette } from '../palette';
+import { palette } from '../constants/palette';
 
 export default class TouchGrid extends React.PureComponent {
 
