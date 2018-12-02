@@ -15,8 +15,8 @@ var DirtDiagonal = require('../assets/images/DirtDiagonal50.png');
 var PathBack = require('../assets/images/pathBack.png');
 
 var tempBox = {
-  foreground: DirtDiagonal,
-  background: PathBack,
+  // foreground: DirtDiagonal,
+  // background: PathBack,
 };
 
 export default class HomeScreen extends React.Component {

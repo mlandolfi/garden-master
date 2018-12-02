@@ -18,6 +18,8 @@ export default class DisplayGrid extends React.PureComponent {
 	                flexDirection: 'row',
 	                flexWrap: 'wrap',
 	                justifyContent: 'center',
+	                borderWidth: 2,
+	                borderColor: 'black',
 	            }}
 	        >
 	            {boxesArray.map((row) => {

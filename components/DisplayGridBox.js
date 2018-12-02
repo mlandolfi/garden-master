@@ -12,11 +12,7 @@ export default class DisplayGridBox extends React.PureComponent {	// class alway
 	render() {
 		return (
 			<View
-				style={{
-					...this.sizeStyle,
-					borderColor: 'black',
-					borderWidth: 1,			
-				}}
+				style={this.sizeStyle}
 			>
 				{this.props.background &&
 					<Image

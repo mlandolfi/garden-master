@@ -12,15 +12,6 @@ import { constantStyles } from '../constants/constantStyles';
 
 export default class TouchGrid extends React.Component {
 
-	copyStateArray = () => {
-		let prevArray = this.state.boxesArray;
-		let temp = [];
-		for (let i=0; i<prevArray.length; i++) {
-			temp.push(prevArray[i]);
-		}
-		return temp;
-	}
-
 	_handleBoxPress = () => {
 
 	}
