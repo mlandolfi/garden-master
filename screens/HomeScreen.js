@@ -15,8 +15,8 @@ var DirtDiagonal = require('../assets/images/DirtDiagonal50.png');
 var PathBack = require('../assets/images/pathBack.png');
 
 var tempBox = {
-  // foreground: DirtDiagonal,
-  // background: PathBack,
+  foreground: DirtDiagonal,
+  background: PathBack,
 };
 
 export default class HomeScreen extends React.Component {
@@ -83,7 +83,7 @@ export default class HomeScreen extends React.Component {
     }
     this.setState({
       boxesArray: temp,
-      boxSize: Math.trunc((Layout.window.width-10) / temp[0].length),
+      boxSize: Math.trunc((Layout.window.width-20) / temp[0].length), // this line is broken
     });
   };
 

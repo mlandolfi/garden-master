@@ -6,18 +6,21 @@ export default class DisplayGridBox extends React.PureComponent {	// class alway
 
 	constructor(props) {
 		super(props);
-		this.sizeStyle = { width: props.edgeLength, height: props.edgeLength }
 	}
 
 	render() {
+		let sizeStyle = {
+			width: this.props.edgeLength,
+			height: this.props.edgeLength,
+		}
 		return (
 			<View
-				style={this.sizeStyle}
+				style={sizeStyle}
 			>
 				{this.props.background &&
 					<Image
 						style={{
-							...this.sizeStyle,
+							...sizeStyle,
 							position: 'absolute',
 						}}
 						source={this.props.background}
@@ -25,7 +28,7 @@ export default class DisplayGridBox extends React.PureComponent {	// class alway
 				}
 				{this.props.foreground &&
 					<Image
-						style={this.sizeStyle}
+						style={sizeStyle}
 						source={this.props.foreground}
 					/>
 				}
