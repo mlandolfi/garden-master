@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import DisplayGrid from './DisplayGrid';
 import PressGrid from './PressGrid';
+import BoxTypeSelect from './BoxTypeSelect';
 
 import { palette } from '../constants/palette';
 import { constantStyles } from '../constants/constantStyles';
@@ -92,50 +93,58 @@ export default class TouchGrid extends React.Component {
 		let { edit } = this.props;
 		let { boxesArray, boxEdgeLength } = this.state;
 		return (
-			<ScrollView
-	          maximumZoomScale={4}  // zooming in
-	          contentContainerStyle={{
-	          	flexGrow: 1,
-	            justifyContent : 'center',
-	            flexWrap: 'wrap',
-	            width: boxesArray[0].length * boxEdgeLength + 10,	// the 10 accounts for the border
-	          }}
-	          centerContent
-	        >
-	        	<DisplayGrid
-	        		boxesArray={boxesArray}
-	        		boxEdgeLength={boxEdgeLength}
-	        	/>
-	        	{edit &&
-	        		<PressGrid
+			<View
+				style={{
+					width: Layout.window.width,
+					height: Layout.window.height,
+				}}
+			>
+				<ScrollView
+		          maximumZoomScale={4}  // zooming in
+		          contentContainerStyle={{
+		          	flexGrow: 1,
+		            justifyContent : 'center',
+		            flexWrap: 'wrap',
+		            width: boxesArray[0].length * boxEdgeLength + 10,	// the 10 accounts for the border
+		          }}
+		          centerContent
+		        >
+		        	<DisplayGrid
 		        		boxesArray={boxesArray}
 		        		boxEdgeLength={boxEdgeLength}
-		        		onPress={this._handleBoxPress}
-	        		/>
-	        	}
-	        	{edit &&
-		            <TouchableOpacity
-		              style={styles.addRowContainer}
-		              onPress={this._addRow}
-		            >
-		              <View
-		                name='addRowButton'
-		                style={styles.addRowButton}
-		              />
-		            </TouchableOpacity>
-		        }
-		        {edit &&
-		            <TouchableOpacity
-		              style={styles.addColumnContainer}
-		              onPress={this._addColumn}
-		            >
-		              <View
-		                name='addColumnButton'
-		                style={styles.addColumnButton}
-		              />
-		            </TouchableOpacity>
-		        }
-            </ScrollView>
+		        	/>
+		        	{edit &&
+		        		<PressGrid
+			        		boxesArray={boxesArray}
+			        		boxEdgeLength={boxEdgeLength}
+			        		onPress={this._handleBoxPress}
+		        		/>
+		        	}
+	            </ScrollView>
+	            <BoxTypeSelect />
+	            {edit &&
+			            <TouchableOpacity
+			              style={styles.addRowContainer}
+			              onPress={this._addRow}
+			            >
+			              <View
+			                name='addRowButton'
+			                style={styles.addRowButton}
+			              />
+			            </TouchableOpacity>
+			        }
+			        {edit &&
+			            <TouchableOpacity
+			              style={styles.addColumnContainer}
+			              onPress={this._addColumn}
+			            >
+			              <View
+			                name='addColumnButton'
+			                style={styles.addColumnButton}
+			              />
+			            </TouchableOpacity>
+			        }
+            </View>
 		);
 	}
 }
@@ -148,13 +157,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 150,
     height: 50,
-    right: 70,
-    bottom: 10,
+    right: 80,
+    bottom: 40,
   },
   addRowButton: {
     height: 50,
     borderWidth: 2,
     borderColor: 'black',
+    borderRadius: 10,
     backgroundColor: '#fff',
     ...constantStyles.shadow,
   },
@@ -162,13 +172,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 50,
     height: 150,
-    right: 10,
-    bottom: 70,
+    right: 20,
+    bottom: 100,
   },
   addColumnButton: {
     height: 150,
     borderWidth: 2,
     borderColor: 'black',
+    borderRadius: 10,
     backgroundColor: '#fff',
     ...constantStyles.shadow,
   }

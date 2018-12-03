@@ -11,8 +11,8 @@ import { palette } from '../constants/palette';
 import { constantStyles } from '../constants/constantStyles';
 import Layout from '../constants/Layout';
 
-var DirtDiagonal = require('../assets/images/DirtDiagonal50.png');
-var PathBack = require('../assets/images/pathBack.png');
+var DirtDiagonal = require('../assets/images/DirtDiagonal.png');
+var PathBack = require('../assets/images/PathFull.png');
 
 export default class HomeScreen extends React.Component {
 
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     bottom: 10,
     width: 50,
     height: 50,
-    borderRadius: 30,
+    borderRadius: 10,
     borderWidth: 2,
     borderColor: 'black',
     ...constantStyles.shadow,
