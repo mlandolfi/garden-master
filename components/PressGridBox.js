@@ -17,8 +17,8 @@ export default class PressGridBox extends React.PureComponent {	// class always 
 		return (
 			<TouchableOpacity
 				style={{
-					backgroundColor: 'black',
-					opacity: 0.7,
+					backgroundColor: 'transparent',
+					opacity: 0.6,
 					borderWidth: 1,
 					borderColor: 'red',
 					width: this.props.edgeLength,
