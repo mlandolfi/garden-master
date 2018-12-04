@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, PanResponder } from 'react-native';
 import PropTypes from 'prop-types';
 
 import PressGridBox from './PressGridBox';
@@ -9,7 +9,15 @@ export default class PressGrid extends React.PureComponent {
 
 	_handlePress = (index) => {
 		this.props.onPress(index);
+		// this.locationsVisited = [];
 	}
+
+	// componentWillMount() {
+	// 	this.panResponder = PanResponder.create({
+	// 		onPanResponderGrant: () => this.locationsVisited = [],
+	// 		onPanResponderMove: 
+	// 	});
+	// }
 
 	render() {
 		let { boxesArray, boxEdgeLength } = this.props;

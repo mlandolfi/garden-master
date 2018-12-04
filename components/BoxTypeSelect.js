@@ -8,6 +8,11 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
+import Layout from '../constants/Layout';
+import ConstantStyles from '../constants/ConstantStyles';
+
+import ScrollableSelect from '../components/ScrollableSelect';
+
 var materials = [
 	{
 		key: 'dirt',
@@ -41,6 +46,7 @@ export default class BoxTypeSelect extends React.PureComponent {
 			activeMaterial: materials[0],
 			activeLayout: 'full',
 			activeRotation: 0,
+			activeBackround: materials[0],
 		}
 		this.props.onUpdate(this.buildSelected());
 	}
@@ -48,13 +54,13 @@ export default class BoxTypeSelect extends React.PureComponent {
 	buildSelected() {
 		let box = {
 			foreground: this.state.activeMaterial.layouts[this.state.activeLayout],
-			background: this.state.activeMaterial.layouts[this.state.activeLayout],
+			background: this.state.activeBackround.layouts['full'],
 			rotation: this.state.activeRotation,
 		};
 		return box;
 	}
 
-	_handleMaterialSelect = (typeIndex) => {
+	_handleForegroundSelect = (typeIndex) => {
 		this.setState({
 			activeMaterial: materials[typeIndex],
 		}, () => this.props.onUpdate(this.buildSelected()));
@@ -66,6 +72,12 @@ export default class BoxTypeSelect extends React.PureComponent {
 		}, () => this.props.onUpdate(this.buildSelected()));
 	}
 
+	_handleBackgroundSelect = (typeIndex) => {
+		this.setState({
+			activeBackround: materials[typeIndex],
+		}, this.props.onUpdate(this.buildSelected()));
+	}
+
 	_handleRotate = () => {
 		this.setState({
 			activeRotation: (this.state.activeRotation % 360) + 90
@@ -73,14 +85,14 @@ export default class BoxTypeSelect extends React.PureComponent {
 	}
 
 	render() {
-		let { activeMaterial, activeLayout } = this.state;
+		let { activeMaterial, activeLayout, activeBackround } = this.state;
 		return (
 			<View
 				style={{
-					backgroundColor: 'transparent',
-					position: 'absolute',
-					margin: 10,
+					backgroundColor: '#fff',
 					padding: 10,
+					...ConstantStyles.shadow,
+
 				}}
 			>
 				<View style={styles.selectTitle}>
@@ -94,69 +106,80 @@ export default class BoxTypeSelect extends React.PureComponent {
 						flexDirection: 'row',
 					}}
 				>
-					{materials.map((material) => {
-						return (
-							<View
-								key={'materialFull#' + material.key}
-								style={{
-									...styles.buttonWrapper,
-									borderWidth: activeMaterial.key == material.key ? 2 : 0,
-								}}
-							>
-								<TouchableOpacity
-									style={styles.buttonStyle}
-									onPress={() => this._handleMaterialSelect(material.index)}
-								>
-									<Image
-										source={material.layouts.full}
-										style={styles.imageStyle}
-									/>
-								</TouchableOpacity>
-							</View>
-						);	
-					})}
-				</View>
-				<View style={styles.selectTitle}>
-					<Text>
-						Layouts
-					</Text>
-				</View>
-				<View
-					style={{
-						display: 'flex',
-						flexDirection: 'row',
-					}}
-				>
-					{Object.keys(activeMaterial.layouts).map((layoutKey) => {
-						let layouts = activeMaterial.layouts[layoutKey];
-						return (
-							<View
-								key={'layout#' + layoutKey}
-								style={{
-									...styles.buttonWrapper,
-									borderWidth: activeLayout == layoutKey ? 2 : 0,
-								}}
-							>
-								<TouchableOpacity
-									style={styles.buttonStyle}
-									onPress={() => this._handleLayoutSelect(layoutKey)}
-								>
-									<Image
-										style={{
-											...styles.imageStyle,
-											transform: [{ rotate: this.state.activeRotation.toString() + 'deg'}],
-										}}
-										source={activeMaterial.layouts[layoutKey]}
-									/>
-								</TouchableOpacity>
-							</View>
-						);
-					})}
-					<TouchableOpacity
-						style={styles.rotateButton}
-						onPress={this._handleRotate}
+					<ScrollableSelect
+						selections={materials.map((material) => {
+							return {
+								image: material.layouts.full,
+								callbackKey: material.index,
+							};
+						})}
+						width='50%'
+						onPress={this._handleForegroundSelect}
+						activeKey={activeMaterial.index}
+						style={{
+							borderRightWidth: 1,
+							borderRightColor: 'black',
+						}}
+					/>
+					<ScrollableSelect
+						selections={materials.map((material)=> {
+							return {
+								image: material.layouts.full,
+								callbackKey: material.index,
+							};
+						})}
+						width='50%'
+						onPress={this._handleBackgroundSelect}
+						activeKey={activeBackround.index}
 					/>
 				</View>
+				<View>
+					<View style={styles.selectTitle}>
+						<Text>
+							Layouts
+						</Text>
+					</View>
+					<View style={styles.lowerContainer} >
+						<View style={styles.layoutsContainer} >
+							<ScrollableSelect
+								selections={Object.keys(activeMaterial.layouts).map((layoutKey) => {
+									return {
+										image: activeMaterial.layouts[layoutKey],
+										callbackKey: layoutKey,
+									};
+								})}
+								width='50%'
+								onPress={this._handleLayoutSelect}
+								rotation={this.state.activeRotation}
+								activeKey={this.state.activeLayout}
+								style={{
+									borderRightWidth: 1,
+									borderRightColor: 'black',
+								}}
+							/>
+							<TouchableOpacity
+								style={styles.rotateButton}
+								onPress={this._handleRotate}
+							/>
+						</View>
+						<View style={styles.activeBox} >
+							<Image
+								source={activeBackround.layouts['full']}
+								style={{
+									...styles.imageStyle,
+									position: 'absolute',
+								}}
+							/>
+							<Image
+								source={activeMaterial.layouts[activeLayout]}
+								style={{
+									...styles.imageStyle,
+									transform: [{ rotate: this.state.activeRotation.toString() + 'deg'}],
+								}}
+							/>
+						</View>
+					</View>	
+				</View>		
 			</View>
 		);
 	}
@@ -177,23 +200,29 @@ const styles = StyleSheet.create({
 		width: 50,
 		height: 50,
 		borderRadius: 10,
-	    borderWidth: 2,
-	    borderColor: 'black',
-	},
-	buttonStyle: {
-		width: 50,
-	    height: 50,
-	},
-	buttonWrapper: {
-		margin: 5,
-		marginLeft: 8,
-		padding: 3,
-		borderColor: 'grey',
-		borderRadius: 10,
+	    borderWidth: 3,
+	    borderColor: 'green',
 	},
 	rotateButton: {
-		width: 30,
-		height: 30,
-		backgroundColor: 'red',
+		width: 50,
+		height: 50,
+		borderColor: 'red',
+		borderWidth: 2,
+		marginTop: 12,
+		marginLeft: 8,
+		borderRadius: 10,
 	},
+	layoutsContainer: {
+		display: 'flex',
+		flexDirection: 'row',
+	},
+	lowerContainer: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	activeBox: {
+		marginTop: 12,
+		marginRight: 10,
+	}
 });

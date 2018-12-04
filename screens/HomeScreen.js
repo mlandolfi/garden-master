@@ -8,7 +8,7 @@ import {
 import TouchGrid from '../components/TouchGrid';
 
 import { palette } from '../constants/palette';
-import { constantStyles } from '../constants/constantStyles';
+import ConstantStyles from '../constants/ConstantStyles';
 import Layout from '../constants/Layout';
 
 var DirtDiagonal = require('../assets/images/DirtDiagonal.png');
@@ -23,7 +23,7 @@ export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      edit: false,
+      edit: true,
     };
   }
 
@@ -77,6 +77,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     borderColor: 'black',
-    ...constantStyles.shadow,
+    ...ConstantStyles.shadow,
   },
 });
