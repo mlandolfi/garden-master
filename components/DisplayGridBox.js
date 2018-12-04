@@ -22,13 +22,17 @@ export default class DisplayGridBox extends React.PureComponent {	// class alway
 						style={{
 							...sizeStyle,
 							position: 'absolute',
+							transform: [{ rotate: this.props.rotation ? this.props.rotation + 'deg' : '0deg'}],
 						}}
 						source={this.props.background}
 					/>
 				}
 				{this.props.foreground &&
 					<Image
-						style={sizeStyle}
+						style={{
+							...sizeStyle,
+							transform: [{ rotate: this.props.rotation ? this.props.rotation + 'deg' : '0deg'}],
+						}}
 						source={this.props.foreground}
 					/>
 				}
@@ -40,4 +44,5 @@ DisplayGridBox.propTypes = {
 	edgeLength: PropTypes.number.isRequired,
 	foreground: PropTypes.number,	// var that is a loaded image
 	background: PropTypes.number,	// var that is a loaded image
+	rotation: PropTypes.number,
 }

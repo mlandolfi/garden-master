@@ -73,10 +73,6 @@ export default class TouchGrid extends React.Component {
 	};
 
 	_handleBoxPress = (indexKey) => {
-	    let newBox = {
-	      foreground: this.props.foreground,
-	      background: this.props.background,
-	    };
 	    let temp = [];
 	    for (let i=0; i<this.state.boxesArray.length; i++)
 	      temp.push(this.state.boxesArray[i].slice());
@@ -84,9 +80,19 @@ export default class TouchGrid extends React.Component {
 	    columnIndex = parseInt(indexKey.split("#")[1])
 	    temp[rowIndex][columnIndex] = {
 	      ...temp[rowIndex][columnIndex],
-	      ...newBox,
+	      ...this.state.activeSelection,
 	    }
 	    this.setState({ boxesArray: temp });
+	}
+
+	_handleTypeUpdate = ({ foreground, background, rotation }) => {
+		this.setState({
+			activeSelection: {
+				foreground: foreground,
+				background: background,
+				rotation: rotation,
+			}
+		});
 	}
 
 	render() {
@@ -121,7 +127,9 @@ export default class TouchGrid extends React.Component {
 		        		/>
 		        	}
 	            </ScrollView>
-	            <BoxTypeSelect />
+	            <BoxTypeSelect
+	            	onUpdate={this._handleTypeUpdate}
+	            />
 	            {edit &&
 			            <TouchableOpacity
 			              style={styles.addRowContainer}
@@ -150,6 +158,8 @@ export default class TouchGrid extends React.Component {
 }
 TouchGrid.propTypes = {
 	edit: PropTypes.bool,
+	foreground: PropTypes.number,
+	background: PropTypes.number,
 }
 
 const styles = StyleSheet.create({

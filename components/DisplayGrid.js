@@ -30,6 +30,7 @@ export default class DisplayGrid extends React.PureComponent {
 	            				edgeLength={boxEdgeLength}
 	            				foreground={box.foreground}
 	            				background={box.background}
+	            				rotation={box.rotation}
 	            			/>
 	            		);
 	            	})

@@ -40,17 +40,36 @@ export default class BoxTypeSelect extends React.PureComponent {
 		this.state = {
 			activeMaterial: materials[0],
 			activeLayout: 'full',
+			activeRotation: 0,
 		}
+		this.props.onUpdate(this.buildSelected());
+	}
+
+	buildSelected() {
+		let box = {
+			foreground: this.state.activeMaterial.layouts[this.state.activeLayout],
+			background: this.state.activeMaterial.layouts[this.state.activeLayout],
+			rotation: this.state.activeRotation,
+		};
+		return box;
 	}
 
 	_handleMaterialSelect = (typeIndex) => {
 		this.setState({
 			activeMaterial: materials[typeIndex],
-		});
+		}, () => this.props.onUpdate(this.buildSelected()));
 	}
 
 	_handleLayoutSelect = (layout) => {
-		this.setState({ activeLayout: layout });
+		this.setState({
+			activeLayout: layout
+		}, () => this.props.onUpdate(this.buildSelected()));
+	}
+
+	_handleRotate = () => {
+		this.setState({
+			activeRotation: (this.state.activeRotation % 360) + 90
+		}, () => this.props.onUpdate(this.buildSelected()))
 	}
 
 	render() {
@@ -123,18 +142,28 @@ export default class BoxTypeSelect extends React.PureComponent {
 									onPress={() => this._handleLayoutSelect(layoutKey)}
 								>
 									<Image
-										style={styles.imageStyle}
+										style={{
+											...styles.imageStyle,
+											transform: [{ rotate: this.state.activeRotation.toString() + 'deg'}],
+										}}
 										source={activeMaterial.layouts[layoutKey]}
 									/>
 								</TouchableOpacity>
 							</View>
 						);
 					})}
+					<TouchableOpacity
+						style={styles.rotateButton}
+						onPress={this._handleRotate}
+					/>
 				</View>
 			</View>
 		);
 	}
 }
+BoxTypeSelect.propTypes = {
+	onUpdate: PropTypes.func.isRequired,
+};
 
 const styles = StyleSheet.create({
 	selectTitle: {
@@ -161,5 +190,10 @@ const styles = StyleSheet.create({
 		padding: 3,
 		borderColor: 'grey',
 		borderRadius: 10,
+	},
+	rotateButton: {
+		width: 30,
+		height: 30,
+		backgroundColor: 'red',
 	},
 });
