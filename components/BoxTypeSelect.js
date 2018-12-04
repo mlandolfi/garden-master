@@ -15,8 +15,15 @@ import ScrollableSelect from '../components/ScrollableSelect';
 
 var materials = [
 	{
-		key: 'dirt',
+		key: 'blank',
 		index: 0,
+		layouts: {
+			full: null,
+		}
+	},
+	{
+		key: 'dirt',
+		index: 1,
 		layouts: {
 			full: require('../assets/images/DirtFull.png'),
 			diagonal: require('../assets/images/DirtDiagonal.png'),
@@ -25,7 +32,7 @@ var materials = [
 	},
 	{
 		key: 'path',
-		index: 1,
+		index: 2,
 		layouts: {
 			full: require('../assets/images/PathFull.png'),
 			diagonal: require('../assets/images/PathDiagonal.png'),
