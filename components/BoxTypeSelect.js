@@ -82,7 +82,7 @@ export default class BoxTypeSelect extends React.PureComponent {
 	_handleBackgroundSelect = (typeIndex) => {
 		this.setState({
 			activeBackround: materials[typeIndex],
-		}, this.props.onUpdate(this.buildSelected()));
+		}, () => this.props.onUpdate(this.buildSelected()));
 	}
 
 	_handleRotate = () => {
@@ -170,20 +170,22 @@ export default class BoxTypeSelect extends React.PureComponent {
 							/>
 						</View>
 						<View style={styles.activeBox} >
-							<Image
-								source={activeBackround.layouts['full']}
-								style={{
-									...styles.imageStyle,
-									position: 'absolute',
-								}}
-							/>
-							<Image
-								source={activeMaterial.layouts[activeLayout]}
-								style={{
-									...styles.imageStyle,
-									transform: [{ rotate: this.state.activeRotation.toString() + 'deg'}],
-								}}
-							/>
+							<View>
+								<Image
+									source={activeBackround.layouts['full']}
+									style={{
+										...styles.imageStyle,
+										position: 'absolute',
+									}}
+								/>
+								<Image
+									source={activeMaterial.layouts[activeLayout]}
+									style={{
+										...styles.imageStyle,
+										transform: [{ rotate: this.state.activeRotation.toString() + 'deg'}],
+									}}
+								/>
+							</View>
 						</View>
 					</View>	
 				</View>		
@@ -207,8 +209,8 @@ const styles = StyleSheet.create({
 		width: 50,
 		height: 50,
 		borderRadius: 10,
-	    borderWidth: 3,
-	    borderColor: 'green',
+		borderWidth: 2,
+		borderColor: 'black',
 	},
 	rotateButton: {
 		width: 50,
@@ -229,7 +231,11 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	activeBox: {
-		marginTop: 12,
+		marginTop: 6,
 		marginRight: 10,
+		borderRadius: 10,
+	    borderWidth: 3,
+	    borderColor: 'green',
+	    padding: 3,
 	}
 });
