@@ -17,8 +17,8 @@ export default class MainGrid extends React.Component {
 
 	constructor(props) {
 		super(props);
-		let numRows = 20;
-		let numColumns = 20;
+		let numRows = 10;
+		let numColumns = 10;
 		this.state = {
 			numRows,
 			numColumns,
@@ -33,6 +33,15 @@ export default class MainGrid extends React.Component {
 		this.setState({ editMode: !this.state.editMode });
 	}
 
+	addNewShape = () => {
+		let possibleShape = {
+			x: 0, y: 0,
+			width: this.state.boxSize * 2,
+			height: this.state.boxSize * 2,
+		};
+		this.setState({ possibleShape })
+	}
+
 	updatePossibleShape = (shape) => {
 		this.setState({ possibleShape: shape });
 	}
@@ -40,11 +49,23 @@ export default class MainGrid extends React.Component {
 	confirmShape = () => {
 		let { shapes } = this.state;
 		shapes.push(this.state.possibleShape);
-		this.setState({ shapes, editMode: false });
+		this.setState({
+			shapes,
+			editMode: false,
+			possibleShape: null,
+			originalShape: null,
+		});
 	}
 
 	cancelShapeEdit = () => {
-		this.setState({ possibleShape: null, editMode: false });
+		let { shapes } = this.state;
+		if (this.state.originalShape)
+			shapes.push(this.state.originalShape)
+		this.setState({
+			possibleShape: null,
+			editMode: false,
+			shapes,
+		});
 	}
 
 	unfreezeScroll = () => {
@@ -59,6 +80,14 @@ export default class MainGrid extends React.Component {
 
 	_handleShapeClick = (index) => {
 		console.log(this.state.shapes[index]);
+		let { shapes } = this.state;
+		this.setState({
+			shapes,
+			originalShape: this.state.shapes[index],
+			possibleShape: this.state.shapes[index],
+			editMode: true,
+		});
+		shapes.splice(index, 1);
 	}
 
 	render() {
@@ -105,12 +134,7 @@ export default class MainGrid extends React.Component {
 						})}
 						{editMode &&
 							<EditShapeMode
-								shape={{
-									x: this.state.boxSize,
-									y: this.state.boxSize,
-									width: this.state.boxSize*2,
-									height: this.state.boxSize*2,
-								}}
+								shape={this.state.possibleShape}
 								unfreezeScroll={this.unfreezeScroll}
 								freezeScroll={this.freezeScroll}
 								boxSize={this.state.boxSize}
@@ -126,7 +150,7 @@ export default class MainGrid extends React.Component {
 				{editMode &&
 					<TouchableOpacity
 		            	style={styles.addShapeButton}
-		            	onPress={this.confirmShape}
+		            	onPress={this.addNewShape}
 		        	/>
 		    	}
 		    	{editMode &&

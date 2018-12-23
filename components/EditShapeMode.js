@@ -16,9 +16,15 @@ export default class EditShapeMode extends React.Component {
 		super(props);
 		this.state = {
 			originalShape: props.shape,
-			shape: props.shape,
+			shape: props.shape ? props.shape : null,
 			grabLocation: -1,
 		};
+	}
+
+	componentDidUpdate(prevProps) {
+		if (!prevProps.shape && this.props.shape) {
+			this.setState({ shape: this.props.shape });
+		}
 	}
 
 	determineGrabLocation = (x, y) => {
@@ -135,20 +141,22 @@ export default class EditShapeMode extends React.Component {
 			<View
 				style={styles.backing}
 			>
-				<View
-					onStartShouldSetResponder={(event) => false}
-					style={{
-						position: 'absolute',
-						left: shape.x,
-						top: shape.y,
-						width: shape.width,
-						height: shape.height,
-						backgroundColor: 'blue',
-						padding: 18,
-						borderWidth: 20,
-						borderColor: 'black',
-					}}
-				/>
+				{shape &&
+					<View
+						onStartShouldSetResponder={(event) => false}
+						style={{
+							position: 'absolute',
+							left: shape.x,
+							top: shape.y,
+							width: shape.width,
+							height: shape.height,
+							backgroundColor: 'blue',
+							padding: 18,
+							borderWidth: 20,
+							borderColor: 'black',
+						}}
+					/>
+				}
 				<View
 					style={styles.overlay}
 					onStartShouldSetResponder={(event) => true}
@@ -162,7 +170,7 @@ export default class EditShapeMode extends React.Component {
 	}
 }
 EditShapeMode.propTypes = {
-	shape: PropTypes.object.isRequired,
+	shape: PropTypes.object,
 	unfreezeScroll: PropTypes.func.isRequired,
 	freezeScroll: PropTypes.func.isRequired,
 	boxSize: PropTypes.number.isRequired,
