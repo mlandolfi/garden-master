@@ -5,7 +5,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import TouchGrid from '../components/TouchGrid';
+import BoxTypeSelect from '../components/BoxTypeSelect';
+import MainGrid from '../components/MainGrid';
 
 import { palette } from '../constants/palette';
 import ConstantStyles from '../constants/ConstantStyles';
@@ -22,14 +23,7 @@ export default class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      edit: true,
-    };
   }
-
-  _toggleEditMode = () => {
-    this.setState({ edit: !this.state.edit });
-  };  
 
   render() {
     return (
@@ -42,19 +36,7 @@ export default class HomeScreen extends React.Component {
           }}
         />
         <View style={styles.activeContainer} > 
-          {true &&
-            <TouchGrid
-              edit={this.state.edit}
-              foreground={DirtDiagonal}
-              background={PathBack}
-            />}
-          <TouchableOpacity
-            onPress={this._toggleEditMode}
-            style={{
-              ...styles.editModeButton,
-              backgroundColor: this.state.edit ? 'grey' : '#fff',
-            }}
-          />
+          <MainGrid />
         </View>
       </View>
     );
@@ -67,16 +49,5 @@ const styles = StyleSheet.create({
     width: Layout.window.width,
     height: Layout.window.height-20, // the 20 is clockSpacer I think
     borderWidth: 5,
-  },
-  editModeButton: {
-    position: 'absolute',
-    right: 10,
-    bottom: 10,
-    width: 50,
-    height: 50,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: 'black',
-    ...ConstantStyles.shadow,
   },
 });

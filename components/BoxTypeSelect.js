@@ -15,15 +15,8 @@ import ScrollableSelect from '../components/ScrollableSelect';
 
 var materials = [
 	{
-		key: 'blank',
-		index: 0,
-		layouts: {
-			full: null,
-		}
-	},
-	{
 		key: 'dirt',
-		index: 1,
+		index: 0,
 		layouts: {
 			full: require('../assets/images/DirtFull.png'),
 			diagonal: require('../assets/images/DirtDiagonal.png'),
@@ -32,7 +25,7 @@ var materials = [
 	},
 	{
 		key: 'path',
-		index: 2,
+		index: 1,
 		layouts: {
 			full: require('../assets/images/PathFull.png'),
 			diagonal: require('../assets/images/PathDiagonal.png'),
@@ -53,21 +46,19 @@ export default class BoxTypeSelect extends React.PureComponent {
 			activeMaterial: materials[0],
 			activeLayout: 'full',
 			activeRotation: 0,
-			activeBackround: materials[0],
 		}
 		this.props.onUpdate(this.buildSelected());
 	}
 
 	buildSelected() {
 		let box = {
-			foreground: this.state.activeMaterial.layouts[this.state.activeLayout],
-			background: this.state.activeBackround.layouts['full'],
+			material: this.state.activeMaterial.layouts[this.state.activeLayout],
 			rotation: this.state.activeRotation,
 		};
 		return box;
 	}
 
-	_handleForegroundSelect = (typeIndex) => {
+	_handleMaterialSelect = (typeIndex) => {
 		this.setState({
 			activeMaterial: materials[typeIndex],
 		}, () => this.props.onUpdate(this.buildSelected()));
@@ -79,12 +70,6 @@ export default class BoxTypeSelect extends React.PureComponent {
 		}, () => this.props.onUpdate(this.buildSelected()));
 	}
 
-	_handleBackgroundSelect = (typeIndex) => {
-		this.setState({
-			activeBackround: materials[typeIndex],
-		}, () => this.props.onUpdate(this.buildSelected()));
-	}
-
 	_handleRotate = () => {
 		this.setState({
 			activeRotation: (this.state.activeRotation % 360) + 90
@@ -92,7 +77,7 @@ export default class BoxTypeSelect extends React.PureComponent {
 	}
 
 	render() {
-		let { activeMaterial, activeLayout, activeBackround } = this.state;
+		let { activeMaterial, activeLayout } = this.state;
 		return (
 			<View
 				style={{
@@ -104,80 +89,47 @@ export default class BoxTypeSelect extends React.PureComponent {
 			>
 				<View style={styles.selectTitle}>
 					<Text>
-						Materials
+						Layouts
 					</Text>
 				</View>
-				<View
-					style={{
-						display: 'flex',
-						flexDirection: 'row',
-					}}
-				>
+				<View style={styles.rowContainer} >
 					<ScrollableSelect
-						selections={materials.map((material) => {
+						selections={Object.keys(activeMaterial.layouts).map((layoutKey) => {
 							return {
-								image: material.layouts.full,
-								callbackKey: material.index,
+								image: activeMaterial.layouts[layoutKey],
+								callbackKey: layoutKey,
 							};
 						})}
-						width='50%'
-						onPress={this._handleForegroundSelect}
-						activeKey={activeMaterial.index}
-						style={{
-							borderRightWidth: 1,
-							borderRightColor: 'black',
-						}}
+						onPress={this._handleLayoutSelect}
+						rotation={this.state.activeRotation}
+						activeKey={this.state.activeLayout}
+						style={styles.scrollableBorder}
 					/>
-					<ScrollableSelect
-						selections={materials.map((material)=> {
-							return {
-								image: material.layouts.full,
-								callbackKey: material.index,
-							};
-						})}
-						width='50%'
-						onPress={this._handleBackgroundSelect}
-						activeKey={activeBackround.index}
+					<TouchableOpacity
+						style={styles.rotateButton}
+						onPress={this._handleRotate}
 					/>
 				</View>
 				<View>
 					<View style={styles.selectTitle}>
 						<Text>
-							Layouts
+							Materials
 						</Text>
 					</View>
-					<View style={styles.lowerContainer} >
-						<View style={styles.layoutsContainer} >
-							<ScrollableSelect
-								selections={Object.keys(activeMaterial.layouts).map((layoutKey) => {
-									return {
-										image: activeMaterial.layouts[layoutKey],
-										callbackKey: layoutKey,
-									};
-								})}
-								width='50%'
-								onPress={this._handleLayoutSelect}
-								rotation={this.state.activeRotation}
-								activeKey={this.state.activeLayout}
-								style={{
-									borderRightWidth: 1,
-									borderRightColor: 'black',
-								}}
-							/>
-							<TouchableOpacity
-								style={styles.rotateButton}
-								onPress={this._handleRotate}
-							/>
-						</View>
-						<View style={styles.activeBox} >
+					<View style={styles.rowContainer} >
+						<ScrollableSelect
+							selections={materials.map((material) => {
+								return {
+									image: material.layouts.full,
+									callbackKey: material.index,
+								};
+							})}
+							onPress={this._handleMaterialSelect}
+							activeKey={activeMaterial.index}
+							style={styles.scrollableBorder}
+						/>
+						<View style={styles.activeMaterialBox} >
 							<View>
-								<Image
-									source={activeBackround.layouts['full']}
-									style={{
-										...styles.imageStyle,
-										position: 'absolute',
-									}}
-								/>
 								<Image
 									source={activeMaterial.layouts[activeLayout]}
 									style={{
@@ -202,8 +154,13 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: 'black',
 	},
-	materialLabels: {
-		textAlign: 'center',
+	rowContainer: {
+		display: 'flex',
+		flexDirection: 'row',
+	},
+	scrollableBorder: {
+		borderRightWidth: 1,
+		borderRightColor: 'black',
 	},
 	imageStyle: {
 		width: 50,
@@ -221,21 +178,10 @@ const styles = StyleSheet.create({
 		marginLeft: 8,
 		borderRadius: 10,
 	},
-	layoutsContainer: {
-		display: 'flex',
-		flexDirection: 'row',
-	},
-	lowerContainer: {
-		display: 'flex',
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-	},
-	activeBox: {
-		marginTop: 6,
-		marginRight: 10,
-		borderRadius: 10,
-	    borderWidth: 3,
-	    borderColor: 'green',
-	    padding: 3,
+	activeMaterialBox: {
+		width: 50,
+		height: 50,
+		marginTop: 12,
+		marginLeft: 8,
 	}
 });
