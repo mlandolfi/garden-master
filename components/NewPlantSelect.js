@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import NewPlantCard from './NewPlantCard';
 
 import Layout from '../constants/Layout';
+import ConstantStyles from '../constants/ConstantStyles';
 
 // picture is just a color for now
 const plants = [
@@ -42,8 +43,10 @@ const styles = StyleSheet.create({
 		height: 500,
 		backgroundColor: '#fff',
 		borderWidth: 2,
+		borderLeftWidth: 0,
 		borderColor: '#000',
 		borderBottomRightRadius: 10,
 		borderTopRightRadius: 10,
+		...ConstantStyles.shadow
 	},
 });

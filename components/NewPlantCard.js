@@ -18,9 +18,9 @@ export default class NewPlantCard extends React.PureComponent {
 				<View
 					style={{
 						backgroundColor: picture,
-						width: 40,
-						height: 40,
-						margin: 'auto',
+						width: 50,
+						height: 60,
+						marginTop: 10,
 					}}
 				/>
 				<Text>{label}</Text>
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
 		borderColor: 'black',
 		margin: 4,
 		flex: 1,
-		justifyContent: 'center',
+		flexDirection: 'column',
+		alignItems: 'center',
 	},
 });
