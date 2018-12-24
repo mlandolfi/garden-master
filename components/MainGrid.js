@@ -8,7 +8,6 @@ import {
 import PropTypes from 'prop-types';
 
 import GridVisual from './GridVisual';
-import EditShapeMode from './EditShapeMode';
 
 import Layout from '../constants/Layout';
 import ConstantStyles from '../constants/ConstantStyles';
@@ -30,8 +29,12 @@ export default class MainGrid extends React.Component {
 	}
 
 	toggleEditMode = () => {
+		this.cancelShapeEdit();
 		this.setState({ editMode: !this.state.editMode });
 	}
+
+	freezeScroll = () => this.setState({ scrollEnabled: false });
+	unfreezeScroll = () => this.setState({ scrollEnabled: true });
 
 	addNewShape = () => {
 		let possibleShape = {
@@ -42,16 +45,11 @@ export default class MainGrid extends React.Component {
 		this.setState({ possibleShape })
 	}
 
-	updatePossibleShape = (shape) => {
-		this.setState({ possibleShape: shape });
-	}
-
 	confirmShape = () => {
 		let { shapes } = this.state;
 		shapes.push(this.state.possibleShape);
 		this.setState({
 			shapes,
-			editMode: false,
 			possibleShape: null,
 			originalShape: null,
 		});
@@ -62,36 +60,163 @@ export default class MainGrid extends React.Component {
 		if (this.state.originalShape)
 			shapes.push(this.state.originalShape)
 		this.setState({
+			originalShape: null,
 			possibleShape: null,
-			editMode: false,
 			shapes,
 		});
 	}
 
-	unfreezeScroll = () => {
-		// console.log("UNFREEZE");
-		this.setState({ scrollEnabled: true });
+	roundDifference = (diff) => {
+		let { boxSize } = this.state;
+		if (diff < 0) {
+			return diff + Math.abs(diff % boxSize);
+		} else {
+			return diff - Math.abs(diff % boxSize);
+		}
 	}
 
-	freezeScroll = () => {
-		// console.log("FREEZE");
-		this.setState({ scrollEnabled: false });
-	}
-
-	_handleShapeClick = (index) => {
-		console.log(this.state.shapes[index]);
+	determineShapePressed = (x, y) => {
+		// function should set the shape that the click is inside to 
+		// the state's possibleShape
+		console.log("LOOKING");
+		console.log(x, y);
 		let { shapes } = this.state;
+		for (let i=0; i<shapes.length; i++) {
+			if (x >= shapes[i].x && x <= shapes[i].x+shapes[i].width
+				&& y >= shapes[i].y && y <= shapes[i].y+shapes[i].height) {
+				let shapePressed = shapes[i];
+				shapes.splice(i, 1);
+				this.setState({
+					shapes,
+					possibleShape: shapePressed,
+					originalShape: shapePressed,
+				});
+				return;
+			}
+		}
+	}
+
+	determineGrabLocation = (x, y) => {
+		let mc = 20;
+		let pc = 0.2;
+		let shape = this.state.possibleShape;
+		let loc = -1;
+		if (x > shape.x && x < shape.x+shape.width && y > shape.y && y < shape.y+shape.height)
+			loc = 0;
+		// upper left corner
+		if (x > shape.x-mc && x < Math.min(shape.x+mc, shape.x+(pc*shape.width))
+			&& y > shape.y-mc && y < Math.min(shape.y+mc, shape.y+(pc*shape.height)))
+			loc = 1
+		// upper right corner
+		else if (x > Math.max(shape.x+shape.width-mc, shape.x+shape.width-(pc*shape.width))
+			&& x < shape.x+shape.width+mc && y > shape.y-mc && y < Math.min(shape.y+mc, shape.y+(pc*shape.height)))
+			loc = 3
+		// lower right corner
+		else if (x > Math.max(shape.x+shape.width-mc, shape.x+shape.width-(pc*shape.width))
+			&& x < shape.x+shape.width+mc
+			&& y > Math.max(shape.y+shape.height-mc, shape.y+shape.height-(pc*shape.height))
+			&& y < shape.y+shape.height+mc)
+			loc = 5
+		// lower left corner
+		else if (x > shape.x && x < shape.x+shape.width
+			&& y > Math.max(shape.y+shape.height-mc, shape.y+shape.height-(pc*shape.height))
+			&& y < shape.y+shape.height+mc)
+			loc = 7
+		return loc;
+	}
+
+	_handleOverlayPress = (event) => {
+		let clickX = event.nativeEvent.locationX;
+		let clickY = event.nativeEvent.locationY;
+		if (!this.state.possibleShape)	// if there isn't a shape selected	
+			return;
+		// this is if a shape is already selected
+		let grabLocation = this.determineGrabLocation(clickX, clickY);
+		if (grabLocation != -1) {
+			this.setState({
+				grabLocation,
+				currentInitialPress: { x: clickX, y: clickY },
+			})
+			this.freezeScroll();
+		}
+	}
+
+	_handleOverlayMove = (event) => {
+		// basically if there's not selected shape or not clicking the shape
+		if (!this.state.possibleShape || this.state.grabLocation == -1)	return;
+		let clickX = event.nativeEvent.locationX;
+		let clickY = event.nativeEvent.locationY;
+		let { possibleShape, boxSize } = this.state;
+		let xDiff = this.roundDifference(clickX - this.state.currentInitialPress.x);
+		let yDiff = this.roundDifference(clickY - this.state.currentInitialPress.y);
+		if (this.state.grabLocation == 0) {
+			newShape = {
+				x: possibleShape.x + xDiff,
+				y: possibleShape.y + yDiff,
+				width: possibleShape.width,
+				height: possibleShape.height,
+			};
+		} else if (this.state.grabLocation == 1) {
+			newShape = {
+				x: possibleShape.x + xDiff,
+				y: possibleShape.y + yDiff,
+				width: possibleShape.width - xDiff,
+				height: possibleShape.height  - yDiff,
+			};
+		} else if (this.state.grabLocation == 3) {	// upper right corner
+			newShape = {
+				x: possibleShape.x,
+				y: possibleShape.y + yDiff,
+				width: possibleShape.width + xDiff,
+				height: possibleShape.height - yDiff,
+			};
+		} else if (this.state.grabLocation == 5) {	// lower right corner
+			newShape = {
+				x: possibleShape.x,
+				y: possibleShape.y,
+				width: possibleShape.width + xDiff,
+				height: possibleShape.height + yDiff,
+			};
+		} else if (this.state.grabLocation == 7) {	//lower left corner
+			newShape = {
+				x: possibleShape.x + xDiff,
+				y: possibleShape.y,
+				width: possibleShape.width - xDiff,
+				height: possibleShape.height  + yDiff,
+			};
+		}
+		let currentInitialPress =  {
+				x: this.state.currentInitialPress.x + xDiff,
+				y: this.state.currentInitialPress.y + yDiff,
+		};
+		// conditionals to keep the shape from becoming too small or out of bounds
+		if (newShape.x < 0 || newShape.x+newShape.width > boxSize*this.state.numColumns) {
+			newShape.x = possibleShape.x;
+			newShape.width = possibleShape.width;
+			currentInitialPress.x = this.state.currentInitialPress.x;
+		}
+		if (newShape.y < 0 || newShape.y+newShape.height > boxSize*this.state.numRows) {
+			newShape.y = possibleShape.y;
+			newShape.height = possibleShape.height;
+			currentInitialPress.y = this.state.currentInitialPress.y;
+		}
+		newShape.width = (newShape.width < boxSize) ? possibleShape.width : newShape.width;
+		newShape.height = (newShape.height < boxSize) ? possibleShape.height : newShape.height;
 		this.setState({
-			shapes,
-			originalShape: this.state.shapes[index],
-			possibleShape: this.state.shapes[index],
-			editMode: true,
+			possibleShape: newShape,
+			currentInitialPress,
 		});
-		shapes.splice(index, 1);
+	}
+
+	_handleOverlayRelease = (event) => {
+		this.setState({ grabLocation: -1 });
+		if (!this.state.possibleShape)
+			this.determineShapePressed(event.nativeEvent.locationX, event.nativeEvent.locationY);
+		this.unfreezeScroll();
 	}
 
 	render() {
-		let { editMode } = this.state;
+		let { editMode, possibleShape } = this.state;
 		return (
 			<View style={styles.outerContainer} >
 				<ScrollView
@@ -119,7 +244,6 @@ export default class MainGrid extends React.Component {
 							return (
 								<View
 									onStartShouldSetResponder={(event) => true}
-									onResponderGrant={(event) => this._handleShapeClick(index)}
 									key={index.toString()}
 									style={{
 										position: 'absolute',
@@ -127,18 +251,34 @@ export default class MainGrid extends React.Component {
 										top: shape.y,
 										width: shape.width,
 										height: shape.height,
-										backgroundColor: 'brown',
+										backgroundColor: editMode ? 'blue' : 'brown',
 									}}
 								/>
 							);
 						})}
+						{possibleShape &&
+							<View
+								onStartShouldSetResponder={(event) => false}
+								style={{
+									position: 'absolute',
+									left: possibleShape.x,
+									top: possibleShape.y,
+									width: possibleShape.width,
+									height: possibleShape.height,
+									backgroundColor: 'green',
+									borderWidth: 4,
+									borderColor: 'black',
+								}}
+							/>
+						}
 						{editMode &&
-							<EditShapeMode
-								shape={this.state.possibleShape}
-								unfreezeScroll={this.unfreezeScroll}
-								freezeScroll={this.freezeScroll}
-								boxSize={this.state.boxSize}
-								updatePossibleShape={this.updatePossibleShape}
+							<View
+								style={styles.editModeOverlay}
+								onStartShouldSetResponder={(event) => true}
+								onMoveShouldSetResponder={(event) => true}
+								onResponderGrant={(event) => this._handleOverlayPress(event)}
+								onResponderMove={(event) => this._handleOverlayMove(event)}
+								onResponderRelease={(event) => this._handleOverlayRelease(event)}
 							/>
 						}
 					</View>
@@ -153,13 +293,13 @@ export default class MainGrid extends React.Component {
 		            	onPress={this.addNewShape}
 		        	/>
 		    	}
-		    	{editMode &&
+		    	{editMode && this.state.possibleShape &&
 		    		<TouchableOpacity
 		        		style={styles.confirmButton}
 		        		onPress={this.confirmShape}
 		      		/>
 		    	}
-		    	{editMode &&
+		    	{editMode && this.state.possibleShape &&
 		    		<TouchableOpacity
 		    			style={styles.cancelButton}
 		    			onPress={this.cancelShapeEdit}
@@ -221,5 +361,10 @@ const styles = StyleSheet.create({
 		borderColor: 'black',
 		borderRadius: 10,
 		...ConstantStyles.shadow,
+	},
+	editModeOverlay: {
+		flex: 1,
+		backgroundColor: 'black',
+		opacity: 0.2,
 	},
 });

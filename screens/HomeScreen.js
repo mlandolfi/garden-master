@@ -13,9 +13,6 @@ import { palette } from '../constants/palette';
 import ConstantStyles from '../constants/ConstantStyles';
 import Layout from '../constants/Layout';
 
-var DirtDiagonal = require('../assets/images/DirtDiagonal.png');
-var PathBack = require('../assets/images/PathFull.png');
-
 export default class HomeScreen extends React.Component {
 
   static navigationOptions = {
