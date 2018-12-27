@@ -45,10 +45,10 @@ export default class HomeScreen extends React.Component {
           {this.state.newPlantUI &&
             <NewPlantSelect />
           }
-          <TouchableOpacity
+          {false && <TouchableOpacity
             style={styles.newPlantButton}
             onPress={this.toggleNewPlantUI}
-          />
+          />}
         </View>
       </View>
     );
