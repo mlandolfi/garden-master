@@ -8,47 +8,52 @@ import {
 import BoxTypeSelect from '../components/BoxTypeSelect';
 import MainGrid from '../components/MainGrid';
 import NewPlantSelect from '../components/NewPlantSelect';
+import GardenIndex from '../components/GardenIndex';
+import ShapeFocus from '../components/ShapeFocus';
+import Shape from '../components/Shape';
 
-import { palette } from '../constants/palette';
+import Palette from '../constants/palette';
 import ConstantStyles from '../constants/ConstantStyles';
 import Layout from '../constants/Layout';
 
+let shape = new Shape(0, 0, 6, 4);
+
 export default class HomeScreen extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { focusedShape: null };
+  }
 
   static navigationOptions = {
     header: null,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      newPlantUI: false,
-    };
-  }
-
-  toggleNewPlantUI = () => {
-    this.setState({ newPlantUI: !this.state.newPlantUI })
+  _handleShapeFocus = (shape) => {
+    if (shape) {
+      this.setState({
+        focusedShape: shape,
+      });
+    } else {
+      this.setState({ focusedShape: null })
+    }
+    
   }
 
   render() {
     return (
       <View name='fullContainer'>
-        <View
-          name='clockSpacer'
-          style={{
-            display: 'block',
-            height: 20,
-          }}
-        />
         <View style={styles.activeContainer} > 
-          <MainGrid />
-          {this.state.newPlantUI &&
-            <NewPlantSelect />
+          <MainGrid
+            focusOnShape={this._handleShapeFocus}
+          />
+          {false && <GardenIndex />}
+          {this.state.focusedShape &&
+            <ShapeFocus
+              shape={this.state.focusedShape}
+              closeShapeFocus={this._handleShapeFocus}
+            />
           }
-          {false && <TouchableOpacity
-            style={styles.newPlantButton}
-            onPress={this.toggleNewPlantUI}
-          />}
         </View>
       </View>
     );
@@ -58,22 +63,8 @@ export default class HomeScreen extends React.Component {
 
 const styles = StyleSheet.create({
   activeContainer: {
-    width: Layout.window.width,
-    height: Layout.window.height-20, // the 20 is clockSpacer I think
-    borderWidth: 5,
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  newPlantButton: {
-    position: 'absolute',
-    right: 20,
-    top: 80,
-    width: 50,
-    height: 50,
-    backgroundColor: 'limegreen',
-    borderColor: '#000',
-    borderWidth: 2,
-    borderRadius: 10,
-    ...ConstantStyles.shadow,
+    backgroundColor: Palette.primary.main,
   },
 });

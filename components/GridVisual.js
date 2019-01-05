@@ -6,6 +6,7 @@ import {
 import PropTypes from 'prop-types';
 
 import Layout from '../constants/Layout';
+import Palette from '../constants/palette';
 
 export default class GridVisual extends React.PureComponent {
 
@@ -15,10 +16,13 @@ export default class GridVisual extends React.PureComponent {
 			<View
 				style={{
 					position: 'absolute',
-					width: Layout.window.width,
+					width: numColumns * boxSize,
 					display: 'flex',
 					flexWrap: 'wrap',
 					flexDirection: 'row',
+					backgroundColor: '#fff',
+					borderWidth: 0,
+					borderColor: Palette.secondary.main,
 				}}
 			>
 				{Array.from(Array(numColumns*numRows)).map((empty, index) => {

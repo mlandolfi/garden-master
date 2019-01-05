@@ -14,17 +14,17 @@
   },
   "dependencies": {
     "@expo/samples": "2.1.1",
-    "expo": "^31.0.2",
+    "expo": "^31.0.6",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
-    "react-navigation": "^2.18.2",
+    "react-navigation": "^2.18.3",
     "react-redux": "^5.1.1",
     "redux": "^4.0.1",
-    "webpack": "^4.26.1"
+    "webpack": "^4.28.3"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0",
     "jest-expo": "^31.0.0",
-    "webpack-dev-server": "^3.1.10"
+    "webpack-dev-server": "^3.1.14"
   }
 }

@@ -1,18 +1,18 @@
 // color palette JavaScript object to pull colors from
-export const palette = {
-	primary: {
-		veryLight: '#4af325',
-		light: '#31d90c',
-		main: '#26A909',
-		dark: '#1b7906',
-		veryDark: '#104804',
+export default {
+	primary: {	//used for primary stuff...duh
+		veryLight: '#ccd8dc',
+		light: '#adc1c8',
+		main: '#8faab3',
+		dark: '#71939e',
+		veryDark: '#597983',
 	},
-	secondary: {
-		veryLight: '#b97430',
-		light: '#905a26',
-		main: '#68411b',
-		dark: '#402810',
-		veryDark: '#170e06'
+	secondary: {	// used for accents
+		veryLight: '#e6e3cf',
+		light: '#d5d0ad',
+		main: '#c4bd8b',
+		dark: '#b3aa69',
+		veryDark: '#9b914f'
 	},
 	trevsMix: {
 		oceanTeal: '#5a9191',
@@ -46,3 +46,7 @@ export const palette = {
 		mintGreen: '#2aa677',
 	},
 };
+
+// const trev = "#dbcccc #8faab3 #c4bd8b #81b14f #451b04 #ffbfdc #bdc4ff #ffbaa9 #94e5d3ff
+// #b88c8c #ddadad #d6c7c7 #9fb9bf #aec8ce#a7552f #e8703b #ecd760 #957aa7
+// #df867e #7c9d45 #566427 #351930 #7a1e47 #bea694"
