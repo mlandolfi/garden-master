@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
-import GridVisual from './GridVisual';
-import Shape from './Shape';
+import GridVisual from '../components/GridVisual';
+import Shape from '../components/Shape';
 
 import Layout from '../constants/Layout';
 import ConstantStyles from '../constants/ConstantStyles';

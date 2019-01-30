@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 import BoxTypeSelect from '../components/BoxTypeSelect';
-import MainGrid from '../components/MainGrid';
+import MainGrid from '../containers/MainGrid';
 import GardenIndex from '../components/GardenIndex';
 import ShapeFocus from '../components/ShapeFocus';
 import Shape from '../components/Shape';

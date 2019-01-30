@@ -51,7 +51,7 @@ Shape.propTypes = {
 	boxSize: PropTypes.number.isRequired,
 	width: PropTypes.number.isRequired,		// in number of boxes
 	height: PropTypes.number.isRequired,	// in number of boxes
-	block: PropTypes.object,				// { color: string, visual: image/number, split: boolean, offset: number }
+	block: PropTypes.object,				// { color: string, visual: image/number, offset: number }
 	splitBlocks: PropTypes.array,
 	plants: PropTypes.array,
 	keyString: PropTypes.string.isRequired,		// unique key to track which shape it is
