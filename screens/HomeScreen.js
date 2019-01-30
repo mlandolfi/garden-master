@@ -7,7 +7,6 @@ import {
 
 import BoxTypeSelect from '../components/BoxTypeSelect';
 import MainGrid from '../components/MainGrid';
-import NewPlantSelect from '../components/NewPlantSelect';
 import GardenIndex from '../components/GardenIndex';
 import ShapeFocus from '../components/ShapeFocus';
 import Shape from '../components/Shape';
@@ -44,9 +43,7 @@ export default class HomeScreen extends React.Component {
     return (
       <View name='fullContainer'>
         <View style={styles.activeContainer} > 
-          <MainGrid
-            focusOnShape={this._handleShapeFocus}
-          />
+          <MainGrid />
           {false && <GardenIndex />}
           {this.state.focusedShape &&
             <ShapeFocus

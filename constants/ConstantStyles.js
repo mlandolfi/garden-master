@@ -5,4 +5,5 @@ export default {
 		shadowOpacity: 0.75,
 		shadowRadius: 4,
 	},
+
 }

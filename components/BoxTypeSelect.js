@@ -13,29 +13,29 @@ import ConstantStyles from '../constants/ConstantStyles';
 
 import ScrollableSelect from '../components/ScrollableSelect';
 
-var materials = [
-	{
-		key: 'dirt',
-		index: 0,
-		layouts: {
-			full: require('../assets/images/DirtFull.png'),
-			diagonal: require('../assets/images/DirtDiagonal.png'),
-			arc: require('../assets/images/DirtArc.png'),
-		},
-	},
-	{
-		key: 'path',
-		index: 1,
-		layouts: {
-			full: require('../assets/images/PathFull.png'),
-			diagonal: require('../assets/images/PathDiagonal.png'),
-			arc: require('../assets/images/PathArc.png'),
-		},
-	},
-]
+// var materials = [
+// 	{
+// 		key: 'dirt',
+// 		index: 0,
+// 		layouts: {
+// 			full: require('../assets/images/DirtFull.png'),
+// 			diagonal: require('../assets/images/DirtDiagonal.png'),
+// 			arc: require('../assets/images/DirtArc.png'),
+// 		},
+// 	},
+// 	{
+// 		key: 'path',
+// 		index: 1,
+// 		layouts: {
+// 			full: require('../assets/images/PathFull.png'),
+// 			diagonal: require('../assets/images/PathDiagonal.png'),
+// 			arc: require('../assets/images/PathArc.png'),
+// 		},
+// 	},
+// ]
 
-var DirtDiagonal = require('../assets/images/DirtDiagonal.png');
-var PathBack = require('../assets/images/PathFull.png');
+// var DirtDiagonal = require('../assets/images/DirtDiagonal.png');
+// var PathBack = require('../assets/images/PathFull.png');
 
 // UI for selecting different materials and shapes
 export default class BoxTypeSelect extends React.PureComponent {

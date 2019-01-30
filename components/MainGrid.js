@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Slider,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -15,11 +16,25 @@ import Layout from '../constants/Layout';
 import ConstantStyles from '../constants/ConstantStyles';
 import Palette from '../constants/palette';
 
+// will ultimately be handled in the Redux store but saving here for now
+function getDefaultShape() {
+	return {
+		x: 0,
+		y: 0,
+		width: 2,
+		height: 2,
+		block: { color: 'green', visual: null, offsetMultiplier: 0 },
+		splitBlocks: [],	// keep in mind indecies go RIGHT ==> left and top ==> down
+		plants: [],
+	};
+}
+defaultVisual = require('../assets/images/transparent3d.png');
+
 export default class MainGrid extends React.Component {
 
 	constructor(props) {
 		super(props);
-		let numRows = 20, numColumns = 15;
+		let numRows = 15, numColumns = 15;
 		let boxSize = this.calculateBoxSize(Layout.window.width,
 			Layout.window.height, numRows, numColumns);
 		let pixelLimits = {
@@ -62,7 +77,10 @@ export default class MainGrid extends React.Component {
 	*	@effects sets this.state.possibleShape to a new generic shape
 	*/
 	addNewPossibleShape = () => {
-		let possibleShape = new Shape(0, 0, 2, 2)
+		let possibleShape = getDefaultShape();
+		possibleShape.block.color = '#7c5e42';
+		possibleShape.block.visual = defaultVisual;
+		possibleShape.block.offsetMultiplier = 1/3;
 		this.buildDraggables(possibleShape, 30);
 		this.setState({ possibleShape });
 	}
@@ -78,21 +96,16 @@ export default class MainGrid extends React.Component {
 		this.setState({
 			shapes,
 			possibleShape: null,
-			originalShape: null,
 		});
 	}
 
 	/**	cancels the current shape being edited
-	*	@modifies this.state.[originalShape, possibleShape, shapes]
-	*	@effects resets this.state.originalShape and this.state.possibleShape
-			re-adds this.state.originalShape (if there was one) to this.state.shapes
+	*	@modifies this.state.[ possibleShape, shapes]
+	*	@effects resets this.state.possibleShape
 	*/
 	cancelShape = () => {
 		let { shapes } = this.state;
-		if (this.state.originalShape)
-			shapes.push(this.state.originalShape)
 		this.setState({
-			originalShape: null,
 			possibleShape: null,
 			shapes,
 		});
@@ -111,29 +124,6 @@ export default class MainGrid extends React.Component {
 		}
 		// return Math.abs(diff % boxSize) > boxSize / 2
 		// 	? diff + (boxSize - Math.abs(diff % boxSize)) : diff - (diff % boxSize);
-	}
-
-	/** determines if a shape was pressed and prepares it to be edited
-	*	@requires grid must be in edit mode and (x, y) must be in respect to grid
-	*	@modifies this.state.[shapes, possibleShape, originalShape]
-	*	@effects sets this.state.[originalShape, possibleShape] to the shape
-	*				that (x, y) is in if it's in one, and removes that shape from
-	*				this.state.shapes
-	*/
-	determineShapePressed = (x, y) => {
-		let { shapes } = this.state;
-		for (let i=0; i<shapes.length; i++) {
-			if (shapes[i].containsCoords(x, y, this.state.boxSize)) {
-				let shapePressed = shapes[i];
-				shapes.splice(i, 1);
-				this.setState({
-					shapes,
-					possibleShape: shapePressed,
-					originalShape: shapePressed,
-				});
-				return;	// ends early as soon as it finds a match
-			}
-		}
 	}
 
 	buildDraggables = (shape, size) => {
@@ -193,22 +183,22 @@ export default class MainGrid extends React.Component {
 		} else {
 			if ((index == 1 || index == 2 || index == 3) && movedY >= 0) {	// top
 				possibleShape.y = movedY;
-				possibleShape.height += -1 * Math.sign(yDiff);
+				possibleShape.height += -1 * Math.round(yDiff / boxSize);
 				draggables = this.adjustDraggables([1,2,3], 0, yDiff, draggables);
 			}
 			if ((index == 1 || index == 8 || index == 7) && movedX >= 0) {	// left
 				possibleShape.x = movedX;
-				possibleShape.width += -1 * Math.sign(xDiff);
+				possibleShape.width += -1 * Math.round(xDiff / boxSize);
 				draggables = this.adjustDraggables([1,8,7], xDiff, 0, draggables);
 			}
 			if ((index == 3 || index == 4 || index == 5)
 					&& event.nativeEvent.locationX <= pixelLimits.width) {	// right
-				possibleShape.width += Math.sign(xDiff);
+				possibleShape.width += Math.round(xDiff / boxSize);
 				draggables = this.adjustDraggables([3,4,5], xDiff, 0, draggables)
 			}
 			if ((index == 5 || index == 6 || index == 7)
 					&& event.nativeEvent.locationY <= pixelLimits.height) {	// bottom
-				possibleShape.height += Math.sign(yDiff);
+				possibleShape.height += Math.round(yDiff / boxSize);
 				draggables = this.adjustDraggables([7,6,5], 0, yDiff, draggables);
 			}
 			// adjust the draggables efficiently
@@ -219,6 +209,11 @@ export default class MainGrid extends React.Component {
 				|| ((index == 3 || index == 4 || index == 5) && event.nativeEvent.locationX <= pixelLimits.width))
 				draggables = this.adjustDraggables([2,0,6], xDiff/2, 0, draggables);
 		}
+		// final check on sizes
+		if (possibleShape.width < 0)
+			possibleShape.width = 0;
+		if (possibleShape.height < 0)
+			possibleShape.height = 0;
 		this.setState({ possibleShape, draggables });
 	}
 
@@ -227,18 +222,22 @@ export default class MainGrid extends React.Component {
 		this.unfreezeScroll();
 	}
 
-	_handleShapeSelect = (shape, index) => {
-		this.props.focusOnShape(shape);
-	}
-
 	calculateBoxSize = (windowWidth, windowHeight, numRows, numColumns) => {
 		return (windowWidth / numColumns) < (windowHeight / numRows)
 			? Math.trunc(windowWidth / numColumns) : Math.trunc(windowHeight / numRows);
 	}
 
+	increaseGridSize = (value) => {
+		this.setState({
+			numRows: value,
+			numColumns: value,
+			boxSize: this.calculateBoxSize(Layout.window.width,
+						Layout.window.height, value, value),
+		});
+	}
+
 	render() {
 		let { editMode, possibleShape } = this.state;
-		console.log(this.state.shapes);
 		return (
 			<View
 				style={styles.outerContainer}
@@ -246,6 +245,7 @@ export default class MainGrid extends React.Component {
 			>
 				<ScrollView
 					maximumZoomScale={4}  // zooming in
+					// minimumZoomScale={0.5}
 			        contentOffset={{x: 0, y: 0}}
 			        contentContainerStyle={{
 			        	flexGrow: 1,
@@ -257,61 +257,58 @@ export default class MainGrid extends React.Component {
 				>
 					<View
 						style={{
-							height: this.state.boxSize*this.state.numColumns,
-							width: this.state.boxSize*this.state.numRows,
+							height: this.state.boxSize*this.state.numRows,
+							width: this.state.boxSize*this.state.numColumns,
+							flexDirection: 'row',
+							alignItems: 'center',
 						}}
 					>
 						<GridVisual
+							block={getDefaultShape().block}
 							boxSize={this.state.boxSize}
 							numRows={this.state.numRows}
 							numColumns={this.state.numColumns}
+							keyString={"MainGrid"}
 						/>
 						{this.state.shapes.map((shape, index) => {
 							return (
 								<View
-									onStartShouldSetResponder={(event) => true}
-									onResponderRelease={(event) => this._handleShapeSelect(shape, index)}
 									key={index.toString()}
 									style={{
 										position: 'absolute',
 										left: shape.x,
 										top: shape.y,
-										width: shape.width * this.state.boxSize,
-										height: shape.height * this.state.boxSize,
-										backgroundColor: editMode ? 'blue' : 'brown',
 									}}
 								>
-									{shape.plants.map((plant, index) => {
-										return (
-											<Image
-												key={"plant"+index.toString()}
-												source={plant.picture}
-												style={{
-													position: 'absolute',
-													left: plant.x,
-													top: plant.y,
-													width: 40,
-													height: 40,
-													backgroundColor: 'green',
-												}}
-											/>
-										);
-									})}
+									<Shape
+										boxSize={this.state.boxSize}
+										width={shape.width}
+										height={shape.height}
+										block={shape.block}
+										splitBlocks={shape.splitBlocks}
+										keyString={index.toString()}
+										plants={shape.plants}
+									/>
 								</View>
 							);
 						})}
 						{possibleShape &&
 							<View
-								onStartShouldSetResponder={(event) => false}
 								style={{
 									position: 'absolute',
 									left: possibleShape.x,
 									top: possibleShape.y,
-									width: possibleShape.width * this.state.boxSize,
-									height: possibleShape.height * this.state.boxSize,
-									backgroundColor: 'green',
 								}}
-							/>
+							>
+								<Shape
+									boxSize={this.state.boxSize}
+									width={possibleShape.width}
+									height={possibleShape.height}
+									block={possibleShape.block}
+									splitBlocks={possibleShape.splitBlocks}
+									keyString={'possibleShape'}
+								/>
+							</View>
 						}
 						{editMode && possibleShape &&
 							this.state.draggables.map((draggable, index) => {
@@ -320,8 +317,10 @@ export default class MainGrid extends React.Component {
 										key={`draggable${index.toString()}`}
 										style={{
 											position: 'absolute',
-											width: 30,
-											height: 30,
+											width: this.state.possibleShape.width < 4 ?
+												1/3 * this.state.possibleShape.width * this.state.boxSize : 40,
+											height: this.state.possibleShape.height < 4 ?
+												1/3 * this.state.possibleShape.height * this.state.boxSize : 40,
 											left: draggable.x,
 											top: draggable.y,
 											backgroundColor: 'blue',
@@ -341,6 +340,30 @@ export default class MainGrid extends React.Component {
 						}
 					</View>
 				</ScrollView>
+				{false &&
+					<View
+						style={{
+							position: 'absolute',
+							top: 150,
+							right: -50,
+							width: 200,	// width because it's rotated
+							height: 50,
+							transform: [{ rotate: '90deg'}],
+						    backgroundColor: Palette.secondary.main,
+						    borderRadius: 10,
+						    padding: 5,
+						    ...ConstantStyles.shadow,
+						}}
+					>
+						<Slider
+				          step={1}
+				          minimumValue={4}
+				          maximumValue={30}
+				          onValueChange={this.increaseGridSize}
+				          value={this.state.numRows}
+				        />
+			        </View>
+				}
 				<TouchableOpacity
 					style={styles.editModeButton}
 					onPress={this.toggleEditMode}
@@ -367,9 +390,6 @@ export default class MainGrid extends React.Component {
 		);
 	}
 }
-MainGrid.propTypes = {
-	focusOnShape: PropTypes.func,
-}
 
 const styles = StyleSheet.create({
 	outerContainer: {
@@ -392,7 +412,7 @@ const styles = StyleSheet.create({
   	addShapeButton: {
 	    position: 'absolute',
 	    left: 10,
-	    top: 30,
+	    top: 50,
 	    width: 50,
 	    height: 50,
 	    borderRadius: 10,

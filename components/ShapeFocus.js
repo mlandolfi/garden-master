@@ -64,7 +64,12 @@ export default class ShapeFocus extends React.Component {
 		let placementY = this.state.newPlantY - 100;	// magic number for height of new plant box
 		if ((placementX > boxSize) && (placementX < boxSize + shape.width * boxSize)
 			&& (placementY > boxSize) && (placementY < boxSize + shape.height * boxSize)) {
-			this.props.shape.addPlant(new Plant(placementX-boxSize, placementY-boxSize, "Tomato", plantImage));
+			this.props.shape.addPlant(new Plant(
+				(placementX-boxSize)/boxSize,
+				(placementY-boxSize)/boxSize,
+				"Tomato",
+				plantImage)
+			);
 			this.setState({ addingPlant: false });
 		} else {
 			this.setState({ addingPlant: false });
@@ -180,10 +185,10 @@ export default class ShapeFocus extends React.Component {
 										source={plant.picture}
 										style={{
 											position: 'absolute',
-											left: plant.x,
-											top: plant.y,
-											width: 40,
-											height: 40,
+											left: plant.x*boxSize,
+											top: plant.y*boxSize,
+											width: boxSize,
+											height: boxSize,
 										}}
 									/>
 								);
@@ -197,8 +202,8 @@ export default class ShapeFocus extends React.Component {
 								position: 'absolute',
 								left: this.state.newPlantX,
 								top: this.state.newPlantY,
-								width: 40,
-								height: 40,
+								width: boxSize,
+								height: boxSize,
 							}}
 						/>
 					}
