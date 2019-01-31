@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
   StyleSheet,
   View,
@@ -16,6 +17,13 @@ import Layout from '../constants/Layout';
 import ConstantStyles from '../constants/ConstantStyles';
 import Palette from '../constants/palette';
 
+// action imports for dispatch
+import {
+	resizeMainGrid,
+	RESIZE_MAIN_GRID_WIDTH,
+	RESIZE_MAIN_GRID_HEIGHT,
+} from '../actions/MainGridActions';
+
 // will ultimately be handled in the Redux store but saving here for now
 function getDefaultShape() {
 	return {
@@ -30,20 +38,17 @@ function getDefaultShape() {
 }
 defaultVisual = require('../assets/images/transparent3d.png');
 
-export default class MainGrid extends React.Component {
+class MainGrid extends React.Component {
 
 	constructor(props) {
 		super(props);
-		let numRows = 15, numColumns = 15;
 		let boxSize = this.calculateBoxSize(Layout.window.width,
-			Layout.window.height, numRows, numColumns);
+			Layout.window.height, props.numRows, props.numColumns);
 		let pixelLimits = {
-			width: boxSize * numColumns,
-			height: boxSize * numRows
+			width: boxSize * props.numColumns,
+			height: boxSize * props.numRows
 		};
 		this.state = {
-			numRows,
-			numColumns,
 			boxSize,
 			pixelLimits,
 			shapes: [],
@@ -229,8 +234,6 @@ export default class MainGrid extends React.Component {
 
 	increaseGridSize = (value) => {
 		this.setState({
-			numRows: value,
-			numColumns: value,
 			boxSize: this.calculateBoxSize(Layout.window.width,
 						Layout.window.height, value, value),
 		});
@@ -238,6 +241,7 @@ export default class MainGrid extends React.Component {
 
 	render() {
 		let { editMode, possibleShape } = this.state;
+		let { numRows, numColumns } = this.props;
 		return (
 			<View
 				style={styles.outerContainer}
@@ -257,8 +261,8 @@ export default class MainGrid extends React.Component {
 				>
 					<View
 						style={{
-							height: this.state.boxSize*this.state.numRows,
-							width: this.state.boxSize*this.state.numColumns,
+							height: this.state.boxSize*numRows,
+							width: this.state.boxSize*numColumns,
 							flexDirection: 'row',
 							alignItems: 'center',
 						}}
@@ -266,8 +270,8 @@ export default class MainGrid extends React.Component {
 						<GridVisual
 							block={getDefaultShape().block}
 							boxSize={this.state.boxSize}
-							numRows={this.state.numRows}
-							numColumns={this.state.numColumns}
+							numRows={numRows}
+							numColumns={numColumns}
 							keyString={"MainGrid"}
 						/>
 						{this.state.shapes.map((shape, index) => {
@@ -360,7 +364,7 @@ export default class MainGrid extends React.Component {
 				          minimumValue={4}
 				          maximumValue={30}
 				          onValueChange={this.increaseGridSize}
-				          value={this.state.numRows}
+				          value={numRows}
 				        />
 			        </View>
 				}
@@ -390,6 +394,22 @@ export default class MainGrid extends React.Component {
 		);
 	}
 }
+
+const mapStateToProps = ({ mainGrid }, ownProps) => {
+	return {
+		numColumns: mainGrid.numColumns,
+		numRows: mainGrid.numRows,
+	};
+}
+
+const mapDispatchToProps = (dispatch) => {
+	return {}
+}
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(MainGrid)
 
 const styles = StyleSheet.create({
 	outerContainer: {

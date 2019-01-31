@@ -28,7 +28,7 @@ function resizeHeight(previousState, height) {
 /*** mainGrid slice reducer ***/
 
 export default function(state = INITIAL_STATE.mainGrid, action) {
-	switch(action) {
+	switch(action.type) {
 		case RESIZE_MAIN_GRID_WIDTH:
 			return resizeWidth(state, action.size)
 			break;
