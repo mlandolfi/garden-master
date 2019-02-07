@@ -8,6 +8,7 @@ import {
   Image,
   Slider,
 } from 'react-native';
+// import { Container, Card, CardItem, Body, Text } from 'native-base';
 import PropTypes from 'prop-types';
 
 import GridVisual from '../components/GridVisual';
@@ -19,42 +20,20 @@ import Palette from '../constants/palette';
 
 // action imports for dispatch
 import {
-	resizeMainGrid,
-	RESIZE_MAIN_GRID_WIDTH,
-	RESIZE_MAIN_GRID_HEIGHT,
+	resizeMainGridWidth,
+	resizeMainGridHeight,
+	addShape,
 } from '../actions/MainGridActions';
 
-// will ultimately be handled in the Redux store but saving here for now
-function getDefaultShape() {
-	return {
-		x: 0,
-		y: 0,
-		width: 2,
-		height: 2,
-		block: { color: 'green', visual: null, offsetMultiplier: 0 },
-		splitBlocks: [],	// keep in mind indecies go RIGHT ==> left and top ==> down
-		plants: [],
-	};
-}
-defaultVisual = require('../assets/images/transparent3d.png');
+planterBoxVisual = require('../assets/images/transparent3d.png');
 
 class MainGrid extends React.Component {
 
 	constructor(props) {
 		super(props);
-		let boxSize = this.calculateBoxSize(Layout.window.width,
-			Layout.window.height, props.numRows, props.numColumns);
-		let pixelLimits = {
-			width: boxSize * props.numColumns,
-			height: boxSize * props.numRows
-		};
 		this.state = {
-			boxSize,
-			pixelLimits,
-			shapes: [],
 			scrollEnabled: true,
 			editMode: false,
-			grabLocation: -1,
 		};
 	}
 
@@ -82,9 +61,9 @@ class MainGrid extends React.Component {
 	*	@effects sets this.state.possibleShape to a new generic shape
 	*/
 	addNewPossibleShape = () => {
-		let possibleShape = getDefaultShape();
+		let possibleShape = Object.assign({}, this.props.defaultShape);
 		possibleShape.block.color = '#7c5e42';
-		possibleShape.block.visual = defaultVisual;
+		possibleShape.block.visual = planterBoxVisual;
 		possibleShape.block.offsetMultiplier = 1/3;
 		this.setState({ possibleShape });
 	}
@@ -95,10 +74,9 @@ class MainGrid extends React.Component {
 	*	@effects adds this.state.posisbleShape to this.state.shapes
 	*/
 	confirmShape = () => {
-		let { shapes } = this.state;
-		shapes.push(this.state.possibleShape);
+		let newShapeID = Math.random().toString(36).substr(2, 9);
+		this.props.addShape(this.state.possibleShape, newShapeID);
 		this.setState({
-			shapes,
 			possibleShape: null,
 		});
 	}
@@ -108,26 +86,9 @@ class MainGrid extends React.Component {
 	*	@effects resets this.state.possibleShape
 	*/
 	cancelShape = () => {
-		let { shapes } = this.state;
 		this.setState({
 			possibleShape: null,
-			shapes,
 		});
-	}
-
-	/**	rounds diff to the closest multiple of boxSize
-	*	@requires	boxSize must be set and diff != null
-	*	@returns	the multiple of boxSize closest to diff
-	*/
-	roundDifference = (diff) => {
-		let { boxSize } = this.state;
-		if (diff < 0) {
-			return Math.round(diff + Math.abs(diff % boxSize));
-		} else {
-			return Math.round(diff - Math.abs(diff % boxSize));
-		}
-		// return Math.abs(diff % boxSize) > boxSize / 2
-		// 	? diff + (boxSize - Math.abs(diff % boxSize)) : diff - (diff % boxSize);
 	}
 
 	calculateBoxSize = (windowWidth, windowHeight, numRows, numColumns) => {
@@ -135,16 +96,11 @@ class MainGrid extends React.Component {
 			? Math.trunc(windowWidth / numColumns) : Math.trunc(windowHeight / numRows);
 	}
 
-	increaseGridSize = (value) => {
-		this.setState({
-			boxSize: this.calculateBoxSize(Layout.window.width,
-						Layout.window.height, value, value),
-		});
-	}
-
 	render() {
 		let { editMode, possibleShape } = this.state;
 		let { numRows, numColumns } = this.props;
+		let boxSize = this.calculateBoxSize(Layout.window.width,
+			Layout.window.height, numRows, numColumns);
 		return (
 			<View
 				style={styles.outerContainer}
@@ -158,29 +114,30 @@ class MainGrid extends React.Component {
 			        	flexGrow: 1,
 						flexDirection: 'row',
 						alignItems: 'center',
-						width: this.state.pixelLimits.width,
+						width: boxSize * numColumns,
 			        }}
 			        scrollEnabled={this.state.scrollEnabled}
 				>
 					<View
 						style={{
-							height: this.state.boxSize*numRows,
-							width: this.state.boxSize*numColumns,
+							height: boxSize*numRows,
+							width: boxSize*numColumns,
 							flexDirection: 'row',
 							alignItems: 'center',
 						}}
 					>
 						<GridVisual
-							block={getDefaultShape().block}
-							boxSize={this.state.boxSize}
+							block={this.props.mainBlock}
+							boxSize={boxSize}
 							numRows={numRows}
 							numColumns={numColumns}
 							keyString={"MainGrid"}
 						/>
-						{this.state.shapes.map((shape, index) => {
+						{Object.keys(this.props.shapes).map((key, index) => {
+							let shape = this.props.shapes[key];
 							return (
 								<View
-									key={index.toString()}
+									key={key}
 									style={{
 										position: 'absolute',
 										left: shape.x,
@@ -188,12 +145,12 @@ class MainGrid extends React.Component {
 									}}
 								>
 									<Shape
-										boxSize={this.state.boxSize}
+										boxSize={boxSize}
 										width={shape.width}
 										height={shape.height}
 										block={shape.block}
 										splitBlocks={shape.splitBlocks}
-										keyString={index.toString()}
+										keyString={key}
 										plants={shape.plants}
 									/>
 								</View>
@@ -208,7 +165,7 @@ class MainGrid extends React.Component {
 								}}
 							>
 								<Shape
-									boxSize={this.state.boxSize}
+									boxSize={boxSize}
 									width={possibleShape.width}
 									height={possibleShape.height}
 									block={possibleShape.block}
@@ -238,7 +195,7 @@ class MainGrid extends React.Component {
 				          step={1}
 				          minimumValue={4}
 				          maximumValue={30}
-				          onValueChange={this.increaseGridSize}
+				          onValueChange={() => console.log("SLIDING")}
 				          value={numRows}
 				        />
 			        </View>
@@ -272,13 +229,18 @@ class MainGrid extends React.Component {
 
 const mapStateToProps = ({ mainGrid }, ownProps) => {
 	return {
+		mainBlock: mainGrid.mainBlock,
 		numColumns: mainGrid.numColumns,
 		numRows: mainGrid.numRows,
+		shapes: mainGrid.shapes,
+		defaultShape: mainGrid.defaultShape,
 	};
 }
 
 const mapDispatchToProps = (dispatch) => {
-	return {}
+	return {
+		addShape: (shape, shapeID) => dispatch(addShape(shape, shapeID))
+	}
 }
 
 export default connect(

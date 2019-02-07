@@ -19,6 +19,14 @@ export default {
 	mainGrid: {
 		numRows: 10,
 		numColumns: 10,
+		mainBlock: { color: '#7cfc00', visual: null, offsetMultiplier: 0 },
 		shapes: {},		// object of all shapes, key is unique id of shape
+		defaultShape: {
+			x: 0, y: 0,
+			width: 1, height: 1,
+			plants: [],
+			splitBlocks: [],
+			block: { color: '#000', visual: null, offsetMultiplier: 0 },
+		},
 	},
 }

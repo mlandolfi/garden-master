@@ -15,7 +15,7 @@ export default class GridVisual extends React.PureComponent {
 
 	_handleBlockPress = (index) => {
 		if (this.props.onBlockPress)
-			this.props.onBlockPress(`grid#${this.props.keyString}box#${index}`)
+			this.props.onBlockPress(`grid#${this.props.keyString}#box#${index}`)
 	}
 
 	renderInnerSquare = (index, nested) => {
@@ -40,7 +40,7 @@ export default class GridVisual extends React.PureComponent {
 					boxSize={boxSize}
 					color={block.color}
 					clickable={clickable}
-					keyString={`shape#${this.props.keyString}block#${index.toString()}`}
+					keyString={`shape#${this.props.keyString}#block#${index.toString()}`}
 					onPress={(keyString) => this.props.onBlockPress(keyString)}
 					plant={plants && plants.includes(index)}
 				/>

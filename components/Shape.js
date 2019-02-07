@@ -24,7 +24,7 @@ export default class Shape extends React.PureComponent {
 	}
 
 	render() {
-		let { boxSize, width, height, block, splitBlocks, plants } = this.props;
+		let { boxSize, width, height, block, splitBlocks, plants, keyString } = this.props;
 		return (
 			<View
 				style={{
@@ -37,7 +37,7 @@ export default class Shape extends React.PureComponent {
 					boxSize={boxSize}
 					numRows={height}
 					numColumns={width}
-					keyString={"planter"}
+					keyString={keyString}
 					clickable
 					splitBlocks={splitBlocks}
 					onBlockPress={this._handleBlockPress}
