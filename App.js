@@ -2,8 +2,8 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import RootReducer from './reducers/RootReducer'
-import INITIAL_STATE from './reducers/InitialState'
+import RootReducer from './RootReducer'
+import INITIAL_STATE from './InitialState'
 import { AppLoading, Asset, Font, Icon } from 'expo';
 // import AppNavigator from './navigation/AppNavigator';
 import HomeScreen from './screens/HomeScreen';
