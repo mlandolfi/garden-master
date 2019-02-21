@@ -22,6 +22,7 @@ export default {
 	mainGrid: {
 		numRows: 10,
 		numColumns: 10,
+		boxSize: 20,
 		block: { color: '#7cfc00', visual: null, offsetMultiplier: 0 },
 		shapes: [],
 		

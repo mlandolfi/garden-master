@@ -22,7 +22,6 @@ const Section = (props) => (
 				<Item fixedLabel>
 					<Label>{props.type == "width" ? "Width: " : "Height: "}</Label>
 					<Input
-						type="number"
 						value={props.value > 0 ? props.value.toString() : "" }
 						onChangeText={(text) => props.setValue(parseInt(text) || 0)}
 					/>

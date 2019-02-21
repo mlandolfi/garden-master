@@ -6,7 +6,8 @@ import {
 	RESIZE_MAIN_GRID_WIDTH,
 	RESIZE_MAIN_GRID_HEIGHT,
 	ADD_SHAPE,
-	CHANGE_MAIN_GRID_BLOCK
+	CHANGE_MAIN_GRID_BLOCK,
+	CHANGE_BOX_SIZE,
 } from './actions';
 
 
@@ -28,6 +29,15 @@ function numRows(state=INITIAL_STATE.mainGrid.numRows, action) {
 			return state;
 	}
 };
+
+function boxSize(state=INITIAL_STATE.mainGrid.boxSize, action) {
+	switch (action.type) {
+		case CHANGE_BOX_SIZE:
+			return action.payload;
+		default:
+			return state;
+	}
+}
 
 // Note: slice() returns a shallow copy meaning it only
 //		uses references to copy objects
@@ -52,6 +62,7 @@ function block(state=INITIAL_STATE.mainGrid.block, action) {
 export default combineReducers({
 	numColumns,
 	numRows,
+	boxSize,
 	shapes,
 	block,
 });

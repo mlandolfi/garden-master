@@ -18,11 +18,13 @@ import {
 	Fab,
 } from 'native-base';
 import PropTypes from 'prop-types';
+import { roundToMultiple } from '../../utils.js';
 
 import GridVisual from '../../components/GridVisual';
 import Shape from '../../components/Shape';
 import PopupWrapper from '../../components/PopupWrapper';
 import GridResize from '../../components/GridResize';
+import AddShape from '../../components/AddShape';
 
 import Layout from '../../constants/Layout';
 import ConstantStyles from '../../constants/ConstantStyles';
@@ -31,7 +33,7 @@ import Palette from '../../constants/palette';
 // action imports for dispatch
 import { resizeMainGridWidth, resizeMainGridHeight, addShape } from './actions';
 // selector imports
-import { getNumRows, getNumColumns, getBlock, getShapes } from './selectors';
+import { getNumRows, getNumColumns, getBlock, getShapes, getBoxSize } from './selectors';
 
 planterBoxVisual = require('../../assets/images/transparent3d.png');
 const defaultShape = {
@@ -49,6 +51,8 @@ class MainGrid extends React.Component {
 			scrollEnabled: true,
 			editMode: false,
 			adjustingGrid: false,
+			addingShape: false,
+			draggable: {},
 		};
 	}
 
@@ -60,12 +64,14 @@ class MainGrid extends React.Component {
 
 	unfreezeScroll = () => this.setState({ scrollEnabled: true });
 
-	addNewPossibleShape = () => {
-		let possibleShape = Object.assign({}, defaultShape);
-		possibleShape.block.color = '#7c5e42';
-		possibleShape.block.visual = planterBoxVisual;
-		possibleShape.block.offsetMultiplier = 1/3;
-		this.setState({ possibleShape });
+	addShape = () => this.setState({ addingShape: true });
+
+	notAddingShape = () => this.setState({ addingShape: false });
+
+
+	placeNewShape = (newShape) => {
+		let possibleShape = Object.assign({}, defaultShape, newShape);
+		this.setState({ possibleShape, addingShape: false });
 	}
 
 	confirmShape = () => {
@@ -77,16 +83,7 @@ class MainGrid extends React.Component {
 		});
 	}
 
-	cancelShape = () => {
-		this.setState({
-			possibleShape: null,
-		});
-	}
-
-	calculateBoxSize = (windowWidth, windowHeight, numRows, numColumns) => {
-		return (windowWidth / numColumns) < (windowHeight / numRows)
-			? Math.trunc(windowWidth / numColumns) : Math.trunc(windowHeight / numRows);
-	}
+	cancelShape = () => this.setState({ possibleShape: null, });
 
 	resizeMainGrid = (numColumns, numRows) => {
 		this.props.resizeMainGridWidth(numColumns);
@@ -94,23 +91,52 @@ class MainGrid extends React.Component {
 		this.setState({ adjustingGrid: false });
 	}
 
+	_handleDraggablePress = ({ nativeEvent }) => {
+		this.setState({
+			scrollEnabled: false,
+			draggable: {
+				referenceX: nativeEvent.locationX,
+				referenceY: nativeEvent.locationY,
+			}
+		});
+	}
+
+	_handleDraggableMove = ({ nativeEvent }) => {
+		let { possibleShape, draggable } = this.state;
+		let { boxSize } = this.props;
+		let xDiff = roundToMultiple(nativeEvent.locationX - draggable.referenceX, this.props.boxSize);
+		let yDiff = roundToMultiple(nativeEvent.locationY - draggable.referenceY, this.props.boxSize);
+		if (xDiff != 0 || yDiff != 0) {
+			this.setState({
+				possibleShape: Object.assign({},
+						possibleShape,
+						{ x: possibleShape.x + xDiff/boxSize, y: possibleShape.y + yDiff/boxSize },
+					),
+				draggable: { referenceX: draggable.referenceX+xDiff, referenceY: draggable.referenceY+yDiff },
+			})
+		}
+	}
+
+	_handleDraggableRelease = ({ nativeEvent }) => {
+		this.unfreezeScroll();
+	}
+
 	render() {
-		let { editMode, possibleShape, adjustingGrid } = this.state;
-		let { numRows, numColumns } = this.props;
-		let boxSize = this.calculateBoxSize(Layout.window.width,
-			Layout.window.height, numRows, numColumns);
+		let { editMode, possibleShape, adjustingGrid, addingShape } = this.state;
+		let { numRows, numColumns, boxSize } = this.props;
 		return (
 			<Container style={styles.outerContainer} >
-				<Content contentContainerStyle={styles.contentContainer} >
+				<View style={styles.contentContainer} >
 					<ScrollView
 						maximumZoomScale={4}  // zooming in
-						// minimumZoomScale={0.5}
+						minimumZoomScale={1}
 				        contentOffset={{x: 0, y: 0}}
 				        contentContainerStyle={{
 				        	flexGrow: 1,
 							flexDirection: 'row',
 							alignItems: 'center',
-							width: boxSize * numColumns,
+							justifyContent: 'space-around',
+							width: Layout.window.width,
 				        }}
 				        scrollEnabled={this.state.scrollEnabled}
 					>
@@ -136,8 +162,8 @@ class MainGrid extends React.Component {
 										key={key}
 										style={{
 											position: 'absolute',
-											left: shape.x,
-											top: shape.y,
+											left: shape.x*boxSize,
+											top: shape.y*boxSize,
 										}}
 									>
 										<Shape
@@ -156,8 +182,8 @@ class MainGrid extends React.Component {
 								<View
 									style={{
 										position: 'absolute',
-										left: possibleShape.x,
-										top: possibleShape.y,
+										left: possibleShape.x*boxSize,
+										top: possibleShape.y*boxSize,
 									}}
 								>
 									<Shape
@@ -170,15 +196,41 @@ class MainGrid extends React.Component {
 									/>
 								</View>
 							}
+							{possibleShape &&
+								<View
+										style={{
+											position: 'absolute',
+											width: numColumns*boxSize,
+											height: numRows*boxSize,
+										}}
+										onStartShouldSetResponder={(event) => true}
+										onMoveShouldSetResponder={(event) => true}
+										onResponderGrant={this._handleDraggablePress}
+										onResponderMove={this._handleDraggableMove}
+										onResponderRelease={this._handleDraggableRelease}
+									/>
+								}
 						</View>
 					</ScrollView>
-				</Content>
+				</View>
+				
 				{adjustingGrid &&
 					<PopupWrapper width={300} height={180}>
 						<GridResize
 							numRows={numRows}
 							numColumns={numColumns}
 							onExit={this.resizeMainGrid}
+						/>
+					</PopupWrapper>
+				}
+				{addingShape &&
+					<PopupWrapper width={350} height={200}>
+						<AddShape
+							mainBlock={this.props.mainBlock}
+							width={350}
+							height={200}
+							onSubmit={this.placeNewShape}
+							onCancel={this.notAddingShape}
 						/>
 					</PopupWrapper>
 				}
@@ -195,42 +247,18 @@ class MainGrid extends React.Component {
 						<Icon name="expand" />
 					</Button>
 					<Button
-						onPress={this.addNewPossibleShape}
+						onPress={this.addShape}
 					>
 						<Icon name="add-circle" />
 					</Button>
 				</Fab>
-					{false &&
-						<View
-							style={{
-								position: 'absolute',
-								top: 150,
-								right: -50,
-								width: 200,	// width because it's rotated
-								height: 50,
-								transform: [{ rotate: '90deg'}],
-							    backgroundColor: Palette.secondary.main,
-							    borderRadius: 10,
-							    padding: 5,
-							    ...ConstantStyles.shadow,
-							}}
-						>
-							<Slider
-					          step={1}
-					          minimumValue={4}
-					          maximumValue={30}
-					          onValueChange={() => console.log("SLIDING")}
-					          value={numRows}
-					        />
-				        </View>
-					}
-			    	{editMode && this.state.possibleShape &&
+			    	{this.state.possibleShape &&
 			    		<TouchableOpacity
 			        		style={styles.confirmButton}
 			        		onPress={this.confirmShape}
 			      		/>
 			    	}
-			    	{editMode && this.state.possibleShape &&
+			    	{this.state.possibleShape &&
 			    		<TouchableOpacity
 			    			style={styles.cancelButton}
 			    			onPress={this.cancelShape}
@@ -246,6 +274,7 @@ const mapStateToProps = (state) => {
 		mainBlock: getBlock(state),
 		numColumns: getNumColumns(state),
 		numRows: getNumRows(state),
+		boxSize: getBoxSize(state),
 		shapes: getShapes(state),
 	};
 }
