@@ -1,30 +1,36 @@
 /*** actions for the MainGrid ***/
 
 // action types
-export const RESIZE_MAIN_GRID_WIDTH = "RESIZE_MAIN_GRID_WIDTH";
-export const RESIZE_MAIN_GRID_HEIGHT = "RESIZE_MAIN_GRID_HEIGHT";
-export const ADD_SHAPE = "ADD_SHAPE";
-export const CHANGE_MAIN_GRID_BLOCK = "CHANGE_MAIN_GRID_BLOCK";
-export const CHANGE_BOX_SIZE = "CHANGE_BOX_SIZE";
+export const RESIZE_LOCATION_WIDTH = "RESIZE_LOCATION_WIDTH";
+export const RESIZE_LOCATION_HEIGHT = "RESIZE_LOCATION_HEIGHT";
+export const ADD_SHAPE_TO_LOCATION = "ADD_SHAPE_TO_LOCATION";
+export const CHANGE_LOCATION_BLOCK = "CHANGE_LOCATION_BLOCK";
+export const CHANGE_LOCATION_BOX_SIZE = "CHANGE_LOCATION_BOX_SIZE";
 
+export const ADD_PLANTS_TO_LOCATION = "ADD_PLANTS_TO_LOCATION";
 
 // action creators
-export function resizeMainGridWidth(size) {
-	return { type: RESIZE_MAIN_GRID_WIDTH, payload: size };
+export function resizeLocationWidth(locationID, width) {
+	return { type: RESIZE_LOCATION_WIDTH, payload: { locationID, width } };
 };
 
-export function resizeMainGridHeight(size) {
-	return { type: RESIZE_MAIN_GRID_HEIGHT, payload: size };
+export function resizeLocationHeight(locationID, height) {
+	return { type: RESIZE_LOCATION_HEIGHT, payload: { locationID, height } };
 };
 
-export function addShape(shape) {
-	return { type: ADD_SHAPE, payload: shape };
+export function addShapeToLocation(locationID, shape) {
+	return { type: ADD_SHAPE_TO_LOCATION, payload: { locationID, shape } };
 }
 
-export function changeMainGridBlock(block) {
-	return { type: CHANGE_MAIN_GRID_BLOCK, payload: block };
+export function changeLocationBlock(locationID, block) {
+	return { type: CHANGE_MAIN_GRID_BLOCK, payload: { locationID, block } };
 }
 
-export function changeBoxSize(size) {
-	return { type: CHANGE_BOX_SIZE, payload: size };
+export function changeBoxSize(locationID, size) {
+	return { type: CHANGE_LOCATION_BOX_SIZE, payload: { locationID, size } };
+}
+
+
+export function addPlantsToLocation(locationID, plants) {
+	return { type: ADD_PLANTS_TO_LOCATION, payload: { locationID, plants } };
 }

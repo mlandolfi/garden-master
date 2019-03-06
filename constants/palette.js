@@ -14,6 +14,15 @@ export default {
 		dark: '#b3aa69',
 		veryDark: '#9b914f'
 	},
+	overlay: {
+		light: '#222',
+		main: '#111',
+		dark: '#000',
+	},
+	glow: {
+		white: '#fff',
+		gold: '#ffff19',
+	},
 	trevsMix: {
 		oceanTeal: '#5a9191',
 		blueshine: '#8abbbb',

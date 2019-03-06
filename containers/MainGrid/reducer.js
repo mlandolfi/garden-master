@@ -3,66 +3,70 @@ import { combineReducers } from 'redux';
 import INITIAL_STATE from '../../InitialState'
 
 import {
-	RESIZE_MAIN_GRID_WIDTH,
-	RESIZE_MAIN_GRID_HEIGHT,
-	ADD_SHAPE,
-	CHANGE_MAIN_GRID_BLOCK,
-	CHANGE_BOX_SIZE,
+	RESIZE_LOCATION_WIDTH,
+	RESIZE_LOCATION_HEIGHT,
+	ADD_SHAPE_TO_LOCATION,
+	CHANGE_LOCATION_BLOCK,
+	CHANGE_LOCATION_BOX_SIZE,
+	ADD_PLANTS_TO_LOCATION,
 } from './actions';
 
 
 /*** case reducers ***/
-function numColumns(state=INITIAL_STATE.mainGrid.numColumns, action) {
-	switch (action.type) {
-		case RESIZE_MAIN_GRID_WIDTH:
-			return action.payload;
-		default:
-			return state;
-	}
-};
-
-function numRows(state=INITIAL_STATE.mainGrid.numRows, action) {
-	switch (action.type) {
-		case RESIZE_MAIN_GRID_HEIGHT:
-			return action.payload;
-		default:
-			return state;
-	}
-};
-
-function boxSize(state=INITIAL_STATE.mainGrid.boxSize, action) {
-	switch (action.type) {
-		case CHANGE_BOX_SIZE:
-			return action.payload;
-		default:
-			return state;
-	}
+function width(locations, { locationID, width }) {
+	return Object.assign({}, locations[locationID], { numColumns: width })
 }
 
-// Note: slice() returns a shallow copy meaning it only
-//		uses references to copy objects
-function shapes(state=INITIAL_STATE.mainGrid.shapes, action) {
-	switch (action.type) {
-		case ADD_SHAPE:
-			return state.slice().concat([action.payload]);
-		default:
-			return state;
-	}
+function height(locations, { locationID, height }) {
+	return Object.assign({}, locations[locationID], { numRows: height })
 }
 
-function block(state=INITIAL_STATE.mainGrid.block, action) {
+function addShape(locations, { locationID, shape }) {
+	return Object.assign({},
+		locations[locationID],
+		{ shapes: locations[locationID].shapes.concat(shape) })
+}
+
+function changeBlock(locations, { locationID, block }) {
+	return Object.assign({}, locations[locationID], { block: block })
+}
+
+function changeBoxSize(locations, { locationID, boxSize }) {
+	return Object.assign({}, locations[locationID], { boxSize: boxSize })
+}
+
+function addPlants(locations, { locationID, plants }) {
+	return Object.assign({}, locations[locationID], { plants: locations[locationID].plants.concat(plants) })
+}
+
+function siftLocations(locations, payload, action) {
+	let listToReturn = [];
+	for (let i=0; i<locations.length; i++) {
+		if (locations[i].id == payload.locationID)	listToReturn.push(action(locations, payload));
+		 else	listToReturn.push(locations[i]);
+	}
+	return listToReturn;
+}
+
+function locations(state=INITIAL_STATE.mainGrid.locations, action) {
 	switch (action.type) {
-		case CHANGE_MAIN_GRID_BLOCK:
-			return action.payload;
+		case RESIZE_LOCATION_WIDTH:
+			return siftLocations(state, action.payload, width);
+		case RESIZE_LOCATION_HEIGHT:
+			return siftLocations(state, action.payload, height);
+		case ADD_SHAPE_TO_LOCATION:
+			return siftLocations(state, action.payload, addShape);
+		case CHANGE_LOCATION_BLOCK:
+			return siftLocations(state, action.payload, changeBlock);
+		case CHANGE_LOCATION_BOX_SIZE:
+			return siftLocations(state, action.payload, changeBoxSize);
+		case ADD_PLANTS_TO_LOCATION:
+			return siftLocations(state, action.payload, addPlants);
 		default:
 			return state;
 	}
 }
 
 export default combineReducers({
-	numColumns,
-	numRows,
-	boxSize,
-	shapes,
-	block,
+	locations,
 });

@@ -20,7 +20,8 @@ const blockDefault = {
 export default class Shape extends React.PureComponent {
 
 	_handleBlockPress = (keyString) => {
-		console.log(keyString);
+		if (this.props.onPress)
+			this.props.onPress(keyString);
 	}
 
 	render() {
@@ -33,6 +34,7 @@ export default class Shape extends React.PureComponent {
 				}}
 			>
 				<GridVisual
+					glowingBlocks={this.props.glowingBlocks}
 					block={block ? block : blockDefault}
 					boxSize={boxSize}
 					numRows={height}
@@ -52,7 +54,9 @@ Shape.propTypes = {
 	width: PropTypes.number.isRequired,		// in number of boxes
 	height: PropTypes.number.isRequired,	// in number of boxes
 	block: PropTypes.object,				// { color: string, visual: image/number, offset: number }
+	onPress: PropTypes.func,
 	splitBlocks: PropTypes.array,
 	plants: PropTypes.array,
+	glowingBlocks: PropTypes.array,
 	keyString: PropTypes.string.isRequired,		// unique key to track which shape it is
 }

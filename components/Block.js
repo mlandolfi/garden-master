@@ -6,20 +6,27 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
+import Palette from '../constants/palette';
+
 var flower = require('../assets/images/flower.png');
 
 export default class Block extends React.PureComponent {
 
+
 	renderContent = () => {
-		let { boxSize, color, plant } = this.props;
+		let { boxSize, color, plant, glow } = this.props;
 		return (
 			<View
 				style={{
 					width: boxSize,
 					height: boxSize,
 					backgroundColor: color,
-					borderWidth: 1,
-					borderColor: 'grey',
+					borderWidth: 0.5,
+					borderColor: glow ? Palette.glow.white : plant.color || 'grey',
+					shadowColor: glow ? Palette.glow.white : 'black',
+					shadowOpacity: glow ? 1 : 0,
+					shadowRadius: 2,
+					shadowOffset: { width: 0, height: 0 },
 				}}
 			>
 				{plant &&
@@ -60,5 +67,6 @@ Block.propTypes = {
 	clickable: PropTypes.bool,
 	onPress: PropTypes.func,	//clickable must be true
 	keyString: PropTypes.string,	// onPress is required for this to be required
-	plant: PropTypes.bool,
+	plant: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+	glow: PropTypes.bool,
 }

@@ -18,6 +18,27 @@ export default class GridVisual extends React.PureComponent {
 			this.props.onBlockPress(`grid#${this.props.keyString}#box#${index}`)
 	}
 
+	isGlowing = (index) => {
+		let { glowingBlocks } = this.props;
+		if (glowingBlocks) {
+			if (glowingBlocks.includes(index)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	hasPlant = (index) => {
+		let { plants } = this.props;
+		if (plants) {
+			for (let i=0; i<plants.length; i++) {
+				if (parseInt(plants[i].plantID) == index)
+					return plants[i];
+			}
+		}
+		return false;
+	}
+
 	renderInnerSquare = (index, nested) => {
 		let { boxSize, clickable, block, plants } = this.props;
 		let numNested = 2;	// just temp, that's num of rows and num of columns
@@ -37,12 +58,13 @@ export default class GridVisual extends React.PureComponent {
 		} else {
 			return (
 				<Block
+					glow={this.isGlowing(index)}
 					boxSize={boxSize}
 					color={block.color}
 					clickable={clickable}
-					keyString={`shape#${this.props.keyString}#block#${index.toString()}`}
+					keyString={`${this.props.keyString}#${index.toString()}`}
 					onPress={(keyString) => this.props.onBlockPress(keyString)}
-					plant={plants && plants.includes(index)}
+					plant={this.hasPlant(index)}
 				/>
 			);
 		}
@@ -102,5 +124,6 @@ GridVisual.propTypes = {
 	keyString: PropTypes.string.isRequired,	// unique id for specific grid
 	clickable: PropTypes.bool,
 	plants: PropTypes.array,
+	glowingBlocks: PropTypes.array,
 	onBlockPress: PropTypes.func,	// must be clickable
 }

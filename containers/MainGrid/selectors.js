@@ -1,12 +1,20 @@
 
+export const getLocations = (state) => state.mainGrid.locations;
 
-export const getNumColumns = (state) => state.mainGrid.numColumns;
+export function getLocation(state, locationID) {
+	state.mainGrid.locations.forEach((location) => {
+		if (location.id == locationID)	return location;
+	});
+	return state.mainGrid.locations[0];
+}
 
-export const getNumRows = (state) => state.mainGrid.numRows;
-
-export const getBoxSize = (state) => state.mainGrid.boxSize;
-
-export const getBlock = (state) => state.mainGrid.block;
-
-// TODO: Make this better
-export const getShapes = (state) => state.mainGrid.shapes;
+export function getPlants(state, locationID) {
+	let plants = {};
+	state.mainGrid.locations[locationID].plants.map((plant) => {
+		if (Object.keys(plants).includes(plant.shapeID))
+			plants[plant.shapeID].push(plant);
+		else
+			plants[plant.shapeID] = [plant];
+	});
+	return plants;
+}

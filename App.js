@@ -1,12 +1,15 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { Provider } from 'react-redux';
+import { Fab, Icon } from 'native-base';
 import { createStore } from 'redux';
 import RootReducer from './RootReducer'
 import INITIAL_STATE from './InitialState'
-import { AppLoading, Asset, Font, Icon } from 'expo';
-// import AppNavigator from './navigation/AppNavigator';
-import HomeScreen from './screens/HomeScreen';
+import { AppLoading, Asset, Font, Icon as ExpoIcon } from 'expo';
+import AppNavigator from './navigation/AppNavigator';
+
+import Palette from './constants/palette';
+import Layout from './constants/Layout';
 
 const store = createStore(RootReducer, INITIAL_STATE);	// creates the redux store from the reducer
 
@@ -29,7 +32,7 @@ export default class App extends React.Component {
       	<Provider store={store}>
 	        <View style={styles.container}>
 	          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-	          <HomeScreen />
+              <AppNavigator />
 	        </View>
         </Provider>
       );
@@ -44,7 +47,7 @@ export default class App extends React.Component {
       ]),
       Font.loadAsync({
         // This is the font that we are using for our tab bar
-        ...Icon.Ionicons.font,
+        ...ExpoIcon.Ionicons.font,
       }),
     ]);
   };
@@ -65,4 +68,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  menuContainer: {
+    width: '100%',
+    height: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 6, height: 8 },
+    shadowRadius: 4,
+    shadowOpacity: 0.5,
+    backgroundColor: '#fff',
+  },
+  fab: {
+    backgroundColor: Palette.primary.dark,
+  },
+  upperFabContainer: {
+    top: Layout.window.height - Layout.window.squareHeight + 20,
+  }
 });
