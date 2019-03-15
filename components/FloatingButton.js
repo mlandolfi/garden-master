@@ -117,6 +117,8 @@ export default class FloatingButton extends React.Component {
 					style={{
 						...styles.rootButton,
 						...style,
+						borderWidth: active ? 2 : 0,
+						borderColor: '#fff',
 					}}
 				>
 					{icon ? icon : <View />}
@@ -172,7 +174,7 @@ const styles = {
 	},
 	leftBranch: {
 		position: 'absolute',
-		right: 70,
+		right: 60,
 		height: 60,
 		display: 'flex',
 		alignItems: 'center',
@@ -181,7 +183,7 @@ const styles = {
 	},
 	topBranch: {
 		position: 'absolute',
-		bottom: 70,
+		bottom: 60,
 		width: 60,
 		display: 'flex',
 		flexDirection: 'column-reverse',
@@ -190,7 +192,7 @@ const styles = {
 	},
 	rightBranch: {
 		position: 'absolute',
-		left: 70,
+		left: 60,
 		height: 60,
 		display: 'flex',
 		alignItems: 'center',
@@ -199,7 +201,7 @@ const styles = {
 	},
 	bottomBranch: {
 		position: 'absolute',
-		top: 70 + (Layout.window.height - Layout.window.squareHeight),
+		top: 60 + (Layout.window.height - Layout.window.squareHeight),
 		width: 60,
 		display: 'flex',
 		flexDirection: 'column',

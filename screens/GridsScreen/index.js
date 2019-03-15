@@ -9,14 +9,7 @@ import {
   Slider,
   Animated,
 } from 'react-native';
-import {
-	Container,
-	Header,
-	Footer,
-	Content,
-	Button,
-	Icon,
-} from 'native-base';
+import { Icon } from 'react-native-elements';
 import PropTypes from 'prop-types';
 import { roundToMultiple } from '../../utils.js';
 
@@ -211,7 +204,7 @@ class MainGrid extends React.Component {
 		let { editMode, possibleShape, adjustingGrid, addingShape, addingPlant, trackSelectedBlocks } = this.state;
 		let { numRows, numColumns, boxSize, block, shapes } = this.props.location;
 		return (
-			<Container style={styles.outerContainer} >
+			<View style={styles.outerContainer} >
 				<View style={styles.contentContainer} >
 					<ScrollView
 						maximumZoomScale={4}  // zooming in
@@ -296,7 +289,7 @@ class MainGrid extends React.Component {
 					right
 					active={this.state.editMode}
 					onPress={this.toggleEditMode}
-					icon={<Icon name="create" style={{ color: '#fff' }} />}
+					icon={<Icon name="create" color="#fff" />}
 					leftBranchButtons={[{
 								iconName: 'expand',
 								iconType: 'font-awesome',
@@ -316,7 +309,7 @@ class MainGrid extends React.Component {
 					style={styles.upperFabContainer}
 					active={this.state.editPlants}
 					onPress={this.toggleEditPlants}
-					icon={<Icon name="leaf" style={{ color: '#fff' }} />}
+					icon={<Icon type="font-awesome" name="leaf" color="#fff" />}
 					bottomBranchButtons={[{
 						iconName: trackSelectedBlocks ? 'check-circle' : 'add-circle',
 						iconType: 'material',
@@ -343,7 +336,7 @@ class MainGrid extends React.Component {
 			    			onPress={this.cancelShape}
 			    		/>
 			    	}
-			</Container>
+			</View>
 		);
 	}
 }
