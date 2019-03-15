@@ -31,23 +31,28 @@ export default class FloatingButton extends React.Component {
 
 	componentDidUpdate(prevProps, prevState) {
 	    if (!prevProps.active && this.props.active) {
-	    	Animated.timing(this.state.width, {
-	    		toValue: 60,
-				duration: 100,
-			}).start();
-			Animated.timing(this.state.height, {
-	    		toValue: 60,
-				duration: 100,
-			}).start();
-	    } else {
-	    	Animated.timing(this.state.width, {
-	    		toValue: 0,
-				duration: 100,
-			}).start();
-			Animated.timing(this.state.height, {
-	    		toValue: 0,
-				duration: 100,
-			}).start();
+	    	Animated.parallel([
+    			Animated.timing(this.state.width, {
+		    		toValue: 60,
+					duration: 100,
+				}),
+				Animated.timing(this.state.height, {
+		    		toValue: 60,
+					duration: 100,
+				}),
+	    	]).start();
+	    } else if (!this.props.active) {
+	    	Animated.parallel([
+	    		Animated.timing(this.state.width, {
+		    		toValue: 0,
+					duration: 100,
+				}),
+				Animated.timing(this.state.height, {
+		    		toValue: 0,
+					duration: 100,
+				}),
+	    	]).start();
+	    	
 	    }
 	}
 
@@ -181,7 +186,6 @@ const styles = {
 		display: 'flex',
 		flexDirection: 'column-reverse',
 		alignItems: 'center',
-		justifyContent: 'center',
 		flexWrap: 'none',
 	},
 	rightBranch: {
@@ -195,10 +199,10 @@ const styles = {
 	},
 	bottomBranch: {
 		position: 'absolute',
-		top: 70,
+		top: 70 + (Layout.window.height - Layout.window.squareHeight),
 		width: 60,
 		display: 'flex',
-		flexDirection: 'column-reverse',
+		flexDirection: 'column',
 		alignItems: 'center',
 		flexWrap: 'none',
 	},

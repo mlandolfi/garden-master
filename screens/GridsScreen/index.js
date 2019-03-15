@@ -16,7 +16,6 @@ import {
 	Content,
 	Button,
 	Icon,
-	Fab,
 } from 'native-base';
 import PropTypes from 'prop-types';
 import { roundToMultiple } from '../../utils.js';
@@ -294,15 +293,15 @@ class MainGrid extends React.Component {
 				}
 				<FloatingButton
 					bottom
-					left
+					right
 					active={this.state.editMode}
-					icon={<Icon name="create" color="#fff" />}
 					onPress={this.toggleEditMode}
-					rightBranchButtons={[{
+					icon={<Icon name="create" style={{ color: '#fff' }} />}
+					leftBranchButtons={[{
 								iconName: 'expand',
 								iconType: 'font-awesome',
 								color: Palette.primary.dark,
-								onPress: this.toggleEditMode
+								onPress: this.adjustGridSize
 							}]}
 					topBranchButtons={[{
 						iconName: 'plus-square',
@@ -311,50 +310,20 @@ class MainGrid extends React.Component {
 						onPress: this.addShape,
 					}]}
 				/>
-				<Fab
-					active={this.state.editMode}
-					direction="up"
-					position="bottomRight"
-					onPress={this.toggleEditMode}
-					style={styles.fab}
-				>
-					<Icon name="create" />
-					<Button
-						onPress={this.adjustGridSize}
-						style={styles.fab}
-					>
-						<Icon name="expand" />
-					</Button>
-					<Button
-						onPress={this.addShape}
-						style={styles.fab}
-					>
-						<Icon type="MaterialIcons" name="add-box" />
-					</Button>
-				</Fab>
-				<Fab
-					position="topRight"
-					direction="down"
-					onPress={this.toggleEditPlants}
+				<FloatingButton
+					top
+					right
+					style={styles.upperFabContainer}
 					active={this.state.editPlants}
-					style={styles.fab}
-					containerStyle={styles.upperFabContainer}
-				>
-					<Icon name="leaf" />
-					<Button
-						onPress={this._handleAddPlantsPress}
-						style={trackSelectedBlocks ?
-							{ backgroundColor: '#0f0' }
-							: styles.fab
-						}
-					>
-						{trackSelectedBlocks ?
-							<Icon name="checkmark-circle-outline" />
-							:
-							<Icon name="add-circle" />
-						}
-					</Button>
-				</Fab>
+					onPress={this.toggleEditPlants}
+					icon={<Icon name="leaf" style={{ color: '#fff' }} />}
+					bottomBranchButtons={[{
+						iconName: trackSelectedBlocks ? 'check-circle' : 'add-circle',
+						iconType: 'material',
+						color: Palette.primary.dark,
+						onPress: this._handleAddPlantsPress,
+					}]}
+				/>
 				{addingPlant &&
 					<PopupWrapper width={"100%"} height={Layout.window.height}>
 						<PlantCreator
@@ -470,10 +439,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#aaa',
 		opacity: 0.4,
 	},
-	fab: {
-		backgroundColor: Palette.primary.dark,
-	},
 	upperFabContainer: {
-		top: Layout.window.height - Layout.window.squareHeight + 20,
+		top: Layout.window.height - Layout.window.squareHeight,
 	}
 });
