@@ -8,8 +8,6 @@ import {
 
 import { Fab, Icon } from 'native-base';
 
-import MainGrid from '../containers/MainGrid';
-
 import Palette from '../constants/palette';
 import ConstantStyles from '../constants/ConstantStyles';
 import Layout from '../constants/Layout';

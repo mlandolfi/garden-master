@@ -21,6 +21,8 @@ import {
 import PropTypes from 'prop-types';
 import { roundToMultiple } from '../../utils.js';
 
+import PlantCard from '../../containers/PlantCard';
+
 import GridVisual from '../../components/GridVisual';
 import Shape from '../../components/Shape';
 import PopupWrapper from '../../components/PopupWrapper';
@@ -28,6 +30,7 @@ import GridResize from '../../components/GridResize';
 import AddShape from '../../components/AddShape';
 import Location from '../../components/Location';
 import PlantCreator from '../../components/PlantCreator';
+import FloatingButton from '../../components/FloatingButton';
 
 import Layout from '../../constants/Layout';
 import ConstantStyles from '../../constants/ConstantStyles';
@@ -64,6 +67,8 @@ class MainGrid extends React.Component {
 			selectedBlocks: [],
 			trackSelectedBlocks: false,
 			draggable: {},
+			showPlantCard: false,
+			selectedPlant: '',
 		};
 	}
 
@@ -91,14 +96,34 @@ class MainGrid extends React.Component {
 		}))
 	}
 
-	_handleBlockPress = (id) => {
-		if (this.state.trackSelectedBlocks && !this.state.selectedBlocks.includes(id))
-			this.setState({ selectedBlocks: this.state.selectedBlocks.concat(id) });
-		else if (this.state.trackSelectedBlocks) {
-			let temp = this.state.selectedBlocks.slice(0);
-			temp.splice(temp.indexOf(id), 1);
-			this.setState({ selectedBlocks: temp });
+	closePlantCard = () => this.setState({ showPlantCard: false, selectedPlant: '' });
+
+	blockHasPlant = (id) => {
+		let { plants } = this.props;
+		let shapeID =  id.substr(0, id.indexOf('#'));
+		let plantID = id.substr(id.indexOf('#')+1, id.length);
+		for (let i=0; i<plants[shapeID].length; i++) {
+			if (`${plants[shapeID][i].shapeID}#${plants[shapeID][i].plantID}` == id)
+				return true;
 		}
+		return false;
+	}
+
+	_handleBlockPress = (id) => {
+		if (this.state.trackSelectedBlocks) {
+			if (!this.state.selectedBlocks.includes(id))
+				this.setState({ selectedBlocks: this.state.selectedBlocks.concat(id) });
+			else {
+				let temp = this.state.selectedBlocks.slice(0);
+				temp.splice(temp.indexOf(id), 1);
+				this.setState({ selectedBlocks: temp });
+			}
+		} else {
+			if (this.blockHasPlant(id)) {
+				this.setState({ showPlantCard: true, selectedPlant: id });
+			}
+		}
+
 	}
 
 	adjustGridSize = () => this.setState({ adjustingGrid: true });
@@ -232,6 +257,15 @@ class MainGrid extends React.Component {
 						onResponderRelease={this._handleDraggableRelease}
 					/>
 				}
+				{this.state.showPlantCard &&
+					<PopupWrapper width={350} height={500} bordered>
+						<PlantCard
+							closeCard={this.closePlantCard}
+							plantKey={this.state.selectedPlant}
+						/>
+					</PopupWrapper>
+
+				}
 				{adjustingGrid &&
 					<PopupWrapper width={300} height={180} bordered>
 						<GridResize
@@ -258,6 +292,25 @@ class MainGrid extends React.Component {
 						pointerEvents="none"
 					/>
 				}
+				<FloatingButton
+					bottom
+					left
+					active={this.state.editMode}
+					icon={<Icon name="create" color="#fff" />}
+					onPress={this.toggleEditMode}
+					rightBranchButtons={[{
+								iconName: 'expand',
+								iconType: 'font-awesome',
+								color: Palette.primary.dark,
+								onPress: this.toggleEditMode
+							}]}
+					topBranchButtons={[{
+						iconName: 'plus-square',
+						iconType: 'font-awesome',
+						color: Palette.primary.dark,
+						onPress: this.addShape,
+					}]}
+				/>
 				<Fab
 					active={this.state.editMode}
 					direction="up"
@@ -276,7 +329,7 @@ class MainGrid extends React.Component {
 						onPress={this.addShape}
 						style={styles.fab}
 					>
-						<Icon name="add-circle" />
+						<Icon type="MaterialIcons" name="add-box" />
 					</Button>
 				</Fab>
 				<Fab

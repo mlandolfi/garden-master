@@ -48,7 +48,7 @@ function siftLocations(locations, payload, action) {
 	return listToReturn;
 }
 
-function locations(state=INITIAL_STATE.mainGrid.locations, action) {
+function locations(state=INITIAL_STATE.gridsScreen.locations, action) {
 	switch (action.type) {
 		case RESIZE_LOCATION_WIDTH:
 			return siftLocations(state, action.payload, width);

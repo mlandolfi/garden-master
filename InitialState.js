@@ -52,12 +52,12 @@ const defaultLocation = {
 	numColumns: 10,
 	boxSize: 20,
 	block: { color: Palette.primary.light, visual: null, offsetMultiplier: 0 },
-	shapes: [],
-	plants: [],
+	shapes: [defaultShape],
+	plants: [defaultPlant],
 }
 
 export default {
-	mainGrid: {
+	gridsScreen: {
 		locations: [defaultLocation],
 	},
 }
