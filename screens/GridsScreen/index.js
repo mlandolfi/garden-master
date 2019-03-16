@@ -254,6 +254,7 @@ class MainGrid extends React.Component {
 						<PlantCard
 							closeCard={this.closePlantCard}
 							plantKey={this.state.selectedPlant}
+							backgroundBlock={block}
 						/>
 					</PopupWrapper>
 

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { Icon } from 'native-base';
+import { Icon } from 'react-native-elements';
 
 import {
 	GridsScreenNav,
@@ -40,7 +40,7 @@ export default class Drawer extends React.Component {
 			onPress={() => this._handleNavButtonPress(item)}
 		>
 			<Icon
-				type={item.iconType ? item.iconType : 'Ionicons'}
+				type={item.iconType ? item.iconType : 'material'}
 				name={item.icon}
 				style={{ flex: 1, textAlign: 'center', fontSize: item.iconSize }}
 			/>
@@ -53,7 +53,7 @@ export default class Drawer extends React.Component {
 			<View style={styles.root}>
 				<View style={styles.profileContainer}>
 					<Icon
-						name="contact"
+						name="contact-phone"
 						style={{ fontSize: 60 }}
 					/>
 					<View style={styles.profileNameContainer}>
@@ -64,10 +64,10 @@ export default class Drawer extends React.Component {
 				</View>
 				<FlatList
 					data={[
-					 	{ title: 'Seedlings', icon: 'egg', iconSize: 50, key: SeedlingsScreenNav.key },
-					 	{ title: 'Grids', icon: 'grid-on', iconType: 'MaterialIcons', iconSize: 50, key: GridsScreenNav.key },
-					 	{ title: 'Calendar', icon: 'calendar', iconSize: 58, key: CalendarScreenNav.key },
-					 	{ title: 'Settings', icon: 'cog', iconSize: 55, key: '' },
+					 	{ title: 'Seedlings', icon: 'pan-tool', iconSize: 50, key: SeedlingsScreenNav.key },
+					 	{ title: 'Grids', icon: 'grid-on', iconType: 'material', iconSize: 50, key: GridsScreenNav.key },
+					 	{ title: 'Calendar', icon: 'perm-contact-calendar', iconSize: 58, key: CalendarScreenNav.key },
+					 	{ title: 'Settings', icon: 'lightbulb-outline', iconSize: 55, key: '' },
 					]}
 					renderItem={this.renderNavigationButton}
 					keyExtractor={(item) => item.title}
@@ -80,7 +80,7 @@ export default class Drawer extends React.Component {
 						onPress={this.props.closeDrawer}
 						activeOpacity={0.8}
 					>
-						<Icon name="arrow-dropleft" />
+						<Icon name="arrow-back" />
 					</TouchableOpacity>
 				</View>
 			</View>

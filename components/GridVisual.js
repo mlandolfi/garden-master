@@ -39,40 +39,28 @@ export default class GridVisual extends React.PureComponent {
 		return false;
 	}
 
-	renderInnerSquare = (index, nested) => {
+	renderInnerSquare = (index) => {
 		let { boxSize, clickable, block, plants } = this.props;
-		let numNested = 2;	// just temp, that's num of rows and num of columns
-		if (nested) {
-			return (
-				<GridVisual
-					keyString={"random"}
-					boxSize={boxSize / numNested}
-					numRows={numNested}
-					numColumns={numNested}
-					block={{ color: block.color, visual: null, offsetMultiplier: 0 }}
-					clickable={clickable}
-					onBlockPress={(keyString) => this.props.onBlockPress(keyString)}
-					plants={plants}
-				/>
-			);
-		} else {
-			return (
-				<Block
-					glow={this.isGlowing(index)}
-					boxSize={boxSize}
-					color={block.color}
-					clickable={clickable}
-					keyString={`${this.props.keyString}#${index.toString()}`}
-					onPress={(keyString) => this.props.onBlockPress(keyString)}
-					plant={this.hasPlant(index)}
-				/>
-			);
-		}
+		return (
+			<Block
+				glow={this.isGlowing(index)}
+				boxSize={boxSize}
+				color={block.color}
+				clickable={clickable}
+				keyString={`${this.props.keyString}#${index.toString()}`}
+				onPress={(keyString) => this.props.onBlockPress(keyString)}
+				plant={this.hasPlant(index)}
+			/>
+		);
+	}
+
+	calcTotalIndex = (rowIndex, columnIndex) => {
+		return rowIndex * this.props.numColumns + columnIndex;
 	}
 
 
 	render() {
-		let { boxSize, numRows, numColumns, block, clickable, splitBlocks } = this.props;
+		let { boxSize, numRows, numColumns, block, clickable } = this.props;
 		let containerWidth = boxSize * numColumns;
 		let containerHeight = boxSize * numRows;
 		let offset = boxSize * block.offsetMultiplier;
@@ -81,34 +69,41 @@ export default class GridVisual extends React.PureComponent {
 				style={{
 					width: containerWidth,
 					height: containerHeight,
+					display: 'flex',
+					flexDirection: 'column',
 				}}
 			>
-				{Array.from(Array(numColumns*numRows)).map((empty, index) => {
+				{Array.from(Array(numRows)).map((empty, rowIndex) => {
 					return (
-						<View
-							key={index.toString()}
-							style={{
-								position: 'absolute',
-								right: (index % numColumns) * boxSize - offset,
-								top: Math.floor(index / numColumns) * boxSize - offset,
-								width: boxSize,
-								height: boxSize,
-							}}
-						>
-							{block.visual &&
-								<Image
-									source={block.visual}
+						<View key={`row${rowIndex.toString()}`} style={{ display: 'flex', flex: 1, width: '100%', flexDirection: 'row' }}>
+							{Array.from(Array(numColumns)).map((empty, columnIndex) => {
+								return (
+								<View
+									key={`row${rowIndex}column${columnIndex.toString()}`}
 									style={{
 										position: 'absolute',
-										left: -1 * offset,
-										width: boxSize * (4/3),
-										height: boxSize * (4/3),
+										right: (columnIndex % numColumns) * boxSize - offset,
+										top: Math.floor(columnIndex / numColumns) * boxSize - offset,
+										flex: 1,
 									}}
-								/>
-							}
-							<View>
-								{this.renderInnerSquare(index, splitBlocks ? splitBlocks.includes(index) : false)}
-							</View>
+								>
+									{block.visual &&
+										<Image
+											source={block.visual}
+											style={{
+												position: 'absolute',
+												left: -1 * offset,
+												width: boxSize * (4/3),
+												height: boxSize * (4/3),
+											}}
+										/>
+									}
+									<View>
+										{this.renderInnerSquare(this.calcTotalIndex(rowIndex, columnIndex), false)}
+									</View>
+								</View>
+								);
+							})}
 						</View>
 					);
 				})}

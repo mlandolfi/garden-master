@@ -26,7 +26,7 @@ import Palette from './constants/palette';
 */
 
 const defaultPlant = {
-	plantID: '2',
+	plantID: 2,
 	shapeID: 'z40y3p4r0',
 	name: 'blue dream',
 	type: 'seedling',

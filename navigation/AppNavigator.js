@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { StyleSheet, View, Animated } from 'react-native';
-import { Fab, Icon } from 'native-base';
+import { Icon } from 'react-native-elements';
 
 import PropTypes from 'prop-types';
 import {
@@ -10,6 +10,7 @@ import {
 } from './Screens'
 
 import Drawer from '../components/Drawer';
+import FloatingButton from '../components/FloatingButton';
 
 import Palette from '../constants/palette';
 import Layout from '../constants/Layout';
@@ -73,6 +74,15 @@ export default class AppNavigator extends React.Component {
                   borderRightWidth: 2,
                 }}
               >
+              {!this.state.showDrawer &&
+                <FloatingButton
+                  top
+                  left
+                  icon={<Icon name="menu" color="#fff" />}
+                  onPress={this.openDrawer}
+                  style={styles.upperFabContainer}
+                />
+              }
                 {this.state.showDrawer &&
                   <View style={styles.menuContainer}>
                     <Drawer
@@ -83,17 +93,6 @@ export default class AppNavigator extends React.Component {
                   </View>
                 }
               </Animated.View>
-              {!this.state.showDrawer &&
-                <Fab
-                  position="topLeft"
-                  direction="down"
-                  onPress={this.openDrawer}
-                  containerStyle={styles.upperFabContainer}
-                  style={styles.fab}
-                >
-                  <Icon name="menu" />
-                </Fab>
-              }
 			</Fragment>
 			);
 		
@@ -111,10 +110,7 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.5,
 		backgroundColor: '#fff',
 	},
-	fab: {
-		backgroundColor: Palette.primary.dark,
-	},
 	upperFabContainer: {
-		top: Layout.window.height - Layout.window.squareHeight + 20,
+		top: Layout.window.height - Layout.window.squareHeight,
 	}
 });
