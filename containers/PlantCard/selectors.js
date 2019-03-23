@@ -11,3 +11,18 @@ export function getPlant(state, plantKey) {
 	}
 	return null;
 }
+
+export function getShapeDimensions(state, shapeID) {
+	for (locationKey in state.gridsScreen.locations) {
+		let location = state.gridsScreen.locations[locationKey];
+		for (let i=0; i<location.shapes.length; i++) {
+			if (location.shapes[i].id == shapeID) {
+				return {
+					width: location.shapes[i].width,
+					height: location.shapes[i].height,
+				};
+			}
+		}
+	}
+	return { width: 0, height: 0 };
+}

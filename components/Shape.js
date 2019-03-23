@@ -40,7 +40,7 @@ export default class Shape extends React.PureComponent {
 					numRows={height}
 					numColumns={width}
 					keyString={keyString}
-					clickable
+					clickable={this.props.clickable}
 					splitBlocks={splitBlocks}
 					onBlockPress={this._handleBlockPress}
 					plants={plants}
@@ -59,4 +59,5 @@ Shape.propTypes = {
 	plants: PropTypes.array,
 	glowingBlocks: PropTypes.array,
 	keyString: PropTypes.string.isRequired,		// unique key to track which shape it is
+	clickable: PropTypes.bool,
 }

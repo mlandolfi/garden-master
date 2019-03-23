@@ -58,6 +58,7 @@ class Location extends React.Component {
 								keyString={shape.id}
 								plants={this.props.plants[shape.id]}
 								onPress={this._handleBoxPress}
+								clickable
 							/>
 						</View>
 					);

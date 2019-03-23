@@ -28,12 +28,13 @@ import Palette from './constants/palette';
 const defaultPlant = {
 	plantID: 2,
 	shapeID: 'z40y3p4r0',
-	name: 'blue dream',
+	name: 'Blue Dream',
 	type: 'seedling',
 	color: 'blue',
 	datePlanted: 'Sat Mar 02 2019 15:37:13 GMT-0500 (EST)',
 	sex: 'female',
 	groupID: '',
+	tags: ["fertilizer", "fresh soil", "worms"]
 }
 
 const defaultShape = {
@@ -50,16 +51,24 @@ const defaultLocation = {
 	id: 0,
 	numRows: 10,
 	numColumns: 10,
-	boxSize: 20,
+	boxSize: 40,
 	block: { color: Palette.primary.light, visual: null, offsetMultiplier: 0 },
 	shapes: [defaultShape],
 	plants: [defaultPlant],
 }
 
+const defaultTags = [
+	{ tag: 'fertilizer', frequency: 5 },
+	{ tag: 'fresh soil', frequency: 8 },
+	{ tag: 'free air', frequency: 1 },
+	{ tag: 'worms', frequency: 1 },
+]
+
 export default {
 	gridsScreen: {
 		locations: [defaultLocation],
 	},
+	tags: defaultTags,
 }
 
 

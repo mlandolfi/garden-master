@@ -11,6 +11,10 @@ import {
 	ADD_PLANTS_TO_LOCATION,
 } from './actions';
 
+import {
+	ADD_TAG_TO_PLANT,
+	REMOVE_TAG_FROM_PLANT,
+} from '../../containers/PlantCard/actions';
 
 /*** case reducers ***/
 function width(locations, { locationID, width }) {
@@ -39,6 +43,17 @@ function addPlants(locations, { locationID, plants }) {
 	return Object.assign({}, locations[locationID], { plants: locations[locationID].plants.concat(plants) })
 }
 
+function addTagToPlant(locations, { locationID, shapeID, plantID, tag }) {
+	let toReturn = Object.assign({}, locations[locationID]);
+	for (let i=0; i<toReturn.plants.length; i++) {
+		if (toReturn.plants[i].shapeID == shapeID && toReturn.plants[i].plantID == plantID) {
+			toReturn.plants[i].tags = toReturn.plants[i].tags.concat(tag);
+			return toReturn;
+		}
+	}
+	return toReturn;
+}
+
 function siftLocations(locations, payload, action) {
 	let listToReturn = [];
 	for (let i=0; i<locations.length; i++) {
@@ -62,6 +77,10 @@ function locations(state=INITIAL_STATE.gridsScreen.locations, action) {
 			return siftLocations(state, action.payload, changeBoxSize);
 		case ADD_PLANTS_TO_LOCATION:
 			return siftLocations(state, action.payload, addPlants);
+		case ADD_TAG_TO_PLANT:
+			return siftLocations(state, action.payload, addTagToPlant);
+		case REMOVE_TAG_FROM_PLANT:
+			return siftLocations(state, action.payload, removeTagFromPlant);
 		default:
 			return state;
 	}

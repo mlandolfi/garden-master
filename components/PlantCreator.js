@@ -32,6 +32,7 @@ class PlantCreator extends React.Component {
 			sex: '',
 			type: 'seedling',
 			strain: '',
+			tags: [],
 		}
 	}
 

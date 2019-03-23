@@ -45,7 +45,7 @@ const defaultShape = {
 		block: { color: '#fff', visual: null, offsetMultiplier: 0 },
 	}
 
-class MainGrid extends React.Component {
+class GridsScreen extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -250,11 +250,13 @@ class MainGrid extends React.Component {
 					/>
 				}
 				{this.state.showPlantCard &&
-					<PopupWrapper width={350} height={500} bordered>
+					<PopupWrapper width={350} height={550} bordered>
 						<PlantCard
 							closeCard={this.closePlantCard}
 							plantKey={this.state.selectedPlant}
 							backgroundBlock={block}
+							containerDimensions={{ width: 350, height: 500 }}	// needs to be changed if the contaner changes
+							locationID={this.props.locationID}
 						/>
 					</PopupWrapper>
 
@@ -344,8 +346,8 @@ class MainGrid extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		location: getLocation(state, ownProps.location),
-		plants: getPlants(state, ownProps.location),
+		location: getLocation(state, ownProps.locationID),
+		plants: getPlants(state, ownProps.locationID),
 	};
 }
 
@@ -365,7 +367,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(MainGrid)
+)(GridsScreen)
 
 const styles = StyleSheet.create({
 	outerContainer: {
